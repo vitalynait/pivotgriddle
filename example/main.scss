@@ -1,0 +1,20 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.documentWrapper {
+  width: 80%;
+  margin: 0 auto;
+  position: relative;
+  padding-top: 60px;
+}
+.fixedTop {
+  height: 40px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  left: 0;
+  background: #000;
+  color: #fff;
+}

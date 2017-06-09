@@ -1,0 +1,18 @@
+{
+  "presets": [
+    "latest",
+    "stage-0",
+    "react"
+  ],
+  "plugins": [
+    "transform-decorators-legacy",
+    [
+      "typecheck",
+      {
+        "disable": {
+          "production": true
+        }
+      }
+    ]
+  ]
+}
