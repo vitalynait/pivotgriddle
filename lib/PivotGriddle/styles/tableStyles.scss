@@ -5,6 +5,7 @@ $gray: #aaa;
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    position: relative;
     thead {
       border: 2px solid;
       border-color: $gray;
@@ -30,9 +31,22 @@ $gray: #aaa;
       }
     }
     tbody {
-      border: 2px solid;
-      border-color: $gray;
       tr {
+        position: relative;
+        height: 100%;
+        border-top: 1px solid;
+        border-bottom: 1px solid;
+        border-color: $lightgray;
+        &:nth-last-child(1) {
+          td {
+            border-bottom-color: #000;
+          }
+        }
+        &:nth-child(1) {
+          td {
+            border-top-color: #000;
+          }
+        }
         td {
           border: 1px solid;
           border-color: $lightgray;
@@ -41,6 +55,12 @@ $gray: #aaa;
           input {
             height: 100%;
           }
+          &:nth-child(1) {
+            border-left-color: #000;
+          }
+          &:nth-last-child(1) {
+            border-right-color: #000;
+          }
         }
         &.totalRow {
           background: lightblue;
@@ -48,10 +68,29 @@ $gray: #aaa;
         &.childrow {
           td:nth-child(1):before {
             position: relative;
-            content: '->';
+            content: '';
             display: inline-block;
             padding-right: 10px;
           }
+        }
+        &.firstRow {
+          td {
+            border-bottom-color: #000;
+          }
+        }
+        .showchilds {
+          position: absolute;
+          left: -20px;
+          cursor: pointer;
+          line-height: 18px;
+          font-size: 14px;
+          font-weight: bold;
+          width: 20px;
+          height: 20px;
+          border-radius: 2px;
+          border: 1px solid;
+          text-align: center;
+          margin-top: 15px;
         }
       }
     }

@@ -10,6 +10,11 @@ class PivotGriddleHeader extends Component {
     this.createColumns();
   }
 
+  shouldComponentUpdate() {
+    this.createColumns();
+    return true;
+  }
+
   columnParse(tree, depth = 0, idx = 0) {
     let reassignDepth = depth;
     if (reassignDepth === 0) {
@@ -60,15 +65,15 @@ class PivotGriddleHeader extends Component {
     };
   }
 
-  async createColumns() {
+  createColumns() {
     this.tableParse = [];
-    await this.columnParse(this.props.columns);
+    this.columnParse(this.props.columns);
     return this.tableParse;
   }
 
   renderCols(col, idx) {
     const { sortBy, sortDir, groupBy, groupBySort } = this.props;
-    const columnName = col.displayName || col.column;
+    const columnName = col.column !== 'showChild' ? col.displayName || col.column : null;
     let groupDir;
     const classRules = {};
     const elRules = {};
@@ -111,10 +116,19 @@ class PivotGriddleHeader extends Component {
   }
   render() {
     const { sortBy, sortDir, groupBy, groupBySort } = this.props;
+    let columns;
+    if (groupBy) {
+      this.createColumns();
+      columns = [...this.tableParse];
+    } else {
+      columns = [...this.tableParse];
+    }
     return (
       <thead>
         {
-          this.tableParse.map((row, idx) => this.renderRow(row, idx))
+          columns.map((row, idx) => {
+            return this.renderRow(row, idx);
+          })
         }
       </thead>
     );

@@ -1,9 +1,18 @@
 import React from 'react';
-import PivotGriddle from '../lib/PivotGriddle/PivotGriddle';
-import fakedata from './data/fakedataflat';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import getData from './utils/generateData';
 import gost from '../lib/PivotGriddle/utils';
 
+import Basic from './containers/Basic';
+import TemplateColumn from './containers/TemplateColumn';
+import NonInitialColumn from './containers/NonInitialColumn';
+import HiddenColumn from './containers/HiddenColumn';
+import GroupRow from './containers/GroupRow';
+import Sostav from './containers/Sostav';
+import Hierarchical from './containers/Hierarchical';
+import SidebarNav from './ui/SidebarNav';
+
+import './semantic.scss';
 import './main.scss';
 
 function EventManager() {
@@ -125,31 +134,52 @@ class App extends React.Component {
       fixedTableHead: !this.state.fixedTableHead,
     });
   }
+  // render() {
+  //   const { groupBy, data, pageSize } = this.state;
+  //   // const data = this.getDataPage();
+  //   return (
+  //     <div className="documentWrapper">
+  //       <div
+  //         className="fixedTop"
+  //         onClick={this.fixTable}
+  //       >
+  //         header
+  //         {this.state.fixedTableHead ? 'фикс' : 'нефикс'}
+  //       </div>
+  //       <PivotGriddle
+  //         columns={calculation}
+  //         rows={data}
+  //         groupBy={groupBy}
+  //         pageSize={pageSize}
+  //         maxItems={this.state.data.length}
+  //         useDefaultStyles
+  //         customTableClass=""
+  //         pagination
+  //         fixedTableHead={this.state.fixedTableHead}
+  //         depthChildrenKey="rows"
+  //       />
+  //     </div>
+  //   );
+  // }
   render() {
-    const { groupBy, data, pageSize } = this.state;
-    // const data = this.getDataPage();
     return (
-      <div className="documentWrapper">
-        <div
-          className="fixedTop"
-          onClick={this.fixTable}
-        >
-          header
-          {this.state.fixedTableHead ? 'фикс' : 'нефикс'}
+      <Router>
+        <div className="documentWrapper">
+          <SidebarNav />
+          <div
+            className="content-box"
+          >
+            <h2>Контент</h2>
+            <Route exact path="/" component={Basic} />
+            <Route exact path="/templatecolumn" component={TemplateColumn} />
+            <Route exact path="/noninitialcolumn" component={NonInitialColumn} />
+            <Route exact path="/hiddencolumn" component={HiddenColumn} />
+            <Route exact path="/grouprow" component={GroupRow} />
+            <Route exact path="/sostav" component={Sostav} />
+            <Route exact path="/hierarchical" component={Hierarchical} />
+          </div>
         </div>
-        <PivotGriddle
-          columns={calculation}
-          rows={data}
-          groupBy={groupBy}
-          pageSize={pageSize}
-          maxItems={this.state.data.length}
-          useDefaultStyles
-          customTableClass=""
-          pagination
-          fixedTableHead={this.state.fixedTableHead}
-          depthChildrenKey="rows"
-        />
-      </div>
+      </Router>
     );
   }
 }

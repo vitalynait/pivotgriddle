@@ -1,20 +1,23 @@
 body {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
-
+* {
+  box-sizing: inherit;
+}
 .documentWrapper {
-  width: 80%;
+  width: 70%;
   margin: 0 auto;
-  position: relative;
-  padding-top: 60px;
 }
-.fixedTop {
-  height: 40px;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  left: 0;
-  background: #000;
-  color: #fff;
+.sidebar-box {
+  width: 20%;
+  float: left;
+  padding-right: 10px;
+  border-right: 1px solid #cecece;
+}
+.content-box {
+  width: 70%;
+  float: left;
+  padding-left: 30px;
 }

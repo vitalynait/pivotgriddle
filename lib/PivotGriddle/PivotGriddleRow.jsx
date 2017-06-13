@@ -7,7 +7,12 @@ const getValue = (col, row, parentRow = null) => {
   if (col === null) return null;
   let value;
   if (col.value && typeof col.value === "function") {
-    value = col.value(row, parentRow);
+    if (col.value.prototype instanceof React.Component) {
+      const ValueComponent = col.value;
+      value = <ValueComponent row={row} parentRow={parentRow}/>
+    } else {
+      value = col.value(row, parentRow);
+    }
   } else {
     value = row[col.column];
   }
@@ -30,7 +35,9 @@ class PivotGriddleRow extends Component {
   }
   renderRow(row, columns, rowSpan, totalRow = false, child = false) {
     const { groupBy } = this.props;
-    const classes = child ? 'childrow' : null;
+    let classes = '';
+    if (child) classes = `childrow`;
+    if (totalRow) classes = `${classes} totalRow`;
     return (
       <tr
         className={classes}
@@ -51,6 +58,9 @@ class PivotGriddleRow extends Component {
       </tr>
     );
   }
+  renderShowChild() {
+    return <td onClick={() => this.onChildShow()}>{this.state.showChild ? '-' : '+'}</td>
+  }
   renderDepthRow(row, columns) {
     const { depthChildrenKey } = this.props;
     const rows = [];
@@ -62,12 +72,14 @@ class PivotGriddleRow extends Component {
     const rrow = (
       <tbody>
         <tr
-          onClick={() => this.onChildShow()}
+          className="firstRow"
         >
           {
             columns.map((col) => {
-              if (!col.children) {
+              if (!col.children && col.column !== 'showChild') {
                 return this.renderCell(row, col, false);
+              } else if (col.column === 'showChild') {
+                return this.renderShowChild();
               } else {
                 const childColumns = col.children;
                 const childData = row[col.column];
@@ -75,13 +87,6 @@ class PivotGriddleRow extends Component {
               }
             })
           }
-          <span
-            className="showchilds"
-            onClick={() => this.onChildShow()}
-          >
-            {this.state.showChild && '-'}
-            {!this.state.showChild && '+'}
-          </span>
         </tr>
         {
           rows

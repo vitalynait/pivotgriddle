@@ -55,9 +55,10 @@ class PivotGriddle extends Component {
   getRenderColumns() {
     const { columns, hiddenColumns, groupChildrenKey, groupBy, depthChildrenKey } = this.props;
     const { rows } = this.state;
-    const removableColumns = [...columns];
+    const removableColumns = columns.filter(col => hiddenColumns.indexOf(col.column) === -1);
     const getColumns = (row, iArr = []) => {
       Object.keys(row).forEach(col => {
+        if (hiddenColumns.indexOf(col) >= 0) return true;
         if (col === groupChildrenKey) {
           getColumns(row[col][0]);
         } else if (col === depthChildrenKey || (!depthChildrenKey && Array.isArray(row[col]))) {
@@ -79,6 +80,12 @@ class PivotGriddle extends Component {
     }
     const split = getColumns(rows[0]);
     const renderColumns = [];
+    if (depthChildrenKey) {
+      renderColumns.push({
+        column: 'showChild',
+        displayName: '',
+      });
+    }
     split.forEach(col => {
       let idxCustom;
       if (typeof col !== 'object') {
@@ -258,9 +265,9 @@ class PivotGriddle extends Component {
       const pageNum = i;
       let element;
       if (isCurrent) {
-        element = <li className="active"><a href="javascript:void(0)">{pageNum}</a></li>;
+        element = <a className="active item">{pageNum}</a>;
       } else {
-        element = <li><a onClick={() => this.onPageChange(pageNum, pageSize)} href="javascript:void(0)">{pageNum}</a></li>;
+        element = <a onClick={() => this.onPageChange(pageNum, pageSize)} className="item">{pageNum}</a>;
       }
       renderer.push(element);
     }
@@ -299,11 +306,11 @@ class PivotGriddle extends Component {
           fixedTableHead={fixedTableHead}
           fixedHeadOffset={this.props.fixedHeadOffset}
         />
-        <ul className="pagination">
+        <div className="ui pagination menu compact">
           {
             paginator
           }
-        </ul>
+        </div>
       </div>
     );
   }
