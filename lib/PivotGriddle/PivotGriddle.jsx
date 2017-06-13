@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { autobind } from 'core-decorators';
-import ResizeObserver from 'resize-observer-polyfill';
 
-import PivotGriddleHeader from './PivotGriddleHeader';
-import PivotGriddleBody from './PivotGriddleBody';
+// import PivotGriddleHeader from './PivotGriddleHeader';
+import PivotGriddleTable from './PivotGriddleTable';
 import gost from './utils';
 
-import './styles/main.scss';
+import styles from './styles/main.scss';
 
 @autobind
 class PivotGriddle extends Component {
@@ -17,20 +16,22 @@ class PivotGriddle extends Component {
     hiddenColumns: [],
     columnsMetadata: {},
     rows: [],
-    childrenKey: 'children',
+    groupChildrenKey: 'children',
+    depthChildrenKey: false,
     groupBy: false,
     pagination: false,
     pageSize: false,
     page: false,
     customTableClass: '',
     fixedTableHead: false,
-    fixedHeadOffset: 40,
+    fixedHeadOffset: 20,
     fixedHeadClass: '',
     customPageChange: false,
     customSort: false,
     infinityScroll: false,
     maxItems: false,
     calculation: true,
+    useDefaultStyles: false,
   }
   constructor(props) {
     super(props);
@@ -45,54 +46,22 @@ class PivotGriddle extends Component {
       pageSize,
       rows: props.rows,
     }
-    this.newTable = null;
-    this.ro = new ResizeObserver(() => {
-      this.fixHead();
-    });
   }
 
   componentDidMount() {
     this.getGroupRows();
-    if (this.props.fixedTableHead) {
-      this.fixHead();
-    }
-    this.checkListener();
-    this.callObserver();
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (newProps.fixedTableHead) {
-      this.fixHead(newProps);
-    } else if (this.props.fixedTableHead && !newProps.fixedTableHead){
-      this.removeFixed();
-    }
-    this.checkListener(newProps);
-    this.callObserver(newProps);
-  }
-
-  checkListener(props = this.props) {
-    const { fixedHeadOffset } = props;
-    if (props.fixedTableHead) {
-      document.addEventListener('scroll', this.checkPosition.bind(this));
-      window.addEventListener('resize', this.checkPosition.bind(this));
-    }
-  }
-
-  callObserver(props = this.props) {
-    this.ro.unobserve(this._table);
-    if (props.fixedTableHead) {
-      this.ro.observe(this._table);
-    }
   }
 
   getRenderColumns() {
-    const { columns, hiddenColumns, childrenKey, groupBy } = this.props;
+    const { columns, hiddenColumns, groupChildrenKey, groupBy, depthChildrenKey } = this.props;
     const { rows } = this.state;
     const removableColumns = [...columns];
     const getColumns = (row, iArr = []) => {
       Object.keys(row).forEach(col => {
-        if (col === childrenKey) {
+        if (col === groupChildrenKey) {
           getColumns(row[col][0]);
+        } else if (col === depthChildrenKey || (!depthChildrenKey && Array.isArray(row[col]))) {
+          return true;
         } else if (typeof row[col] === "object") {
           const arr = getColumns(row[col], []);
           const obj = { column: col, children: arr };
@@ -112,7 +81,6 @@ class PivotGriddle extends Component {
     const renderColumns = [];
     split.forEach(col => {
       let idxCustom;
-      console.log(col);
       if (typeof col !== 'object') {
         idxCustom = removableColumns.findIndex(item => item.column === col);
         if (idxCustom >= 0) {
@@ -199,7 +167,7 @@ class PivotGriddle extends Component {
   }
 
   sortingRows(rows, childs = false) {
-    const { groupBy } = this.props;
+    const { groupBy, depthChildrenKey } = this.props;
     const { groupBySort, sortBy, sortDir } = this.state;
     let sortableRows = [...rows];
     if (groupBy) {
@@ -213,12 +181,23 @@ class PivotGriddle extends Component {
     } else {
       if (sortBy) {
         gost.array.sortDir(sortableRows, sortDir, sortBy);
+        if (depthChildrenKey) {
+          sortableRows = sortableRows.map((row) => {
+            const newRow = {
+              ...row
+            };
+            if (row[depthChildrenKey] && row[depthChildrenKey].length > 1) {
+              newRow[depthChildrenKey] = this.sortingRows(row[depthChildrenKey]);
+            }
+            return newRow;
+          });
+        }
       }
     }
     return sortableRows;
   }
   onSortChange(key) {
-    const { groupBy, customSort } = this.props;
+    const { groupBy, customSort, depthChildrenKey } = this.props;
     const { sortBy, sortDir, groupBySort } = this.state;
     const state = {};
     if (customSort) {
@@ -288,71 +267,8 @@ class PivotGriddle extends Component {
     return renderer;
   }
 
-  checkPosition() {
-    const { fixedHeadOffset } = this.props;
-    if (this._table === null || this.newTable === null) return;
-    if (this._table.getBoundingClientRect().top < fixedHeadOffset) {
-      this.newTable.style.left = `${this._table.getBoundingClientRect().left}px`;
-    } else {
-      this.newTable.style.left = '-9999px';
-    }
-  }
-
-  fixHead(props = this.props) {
-    const { fixedHeadOffset, fixedHeadClass } = props;
-    let tmp;
-    if (this._table && props.fixedTableHead) {
-      if (this.newTable !== null) {
-        if (this._tableWrapper !== undefined) {
-          this._tableWrapper.removeChild(this.newTable);
-          this.newTable = null;
-        }
-      }
-      const fThead = this._table.querySelector('thead');
-
-      if (fThead) {
-        let newTable = document.createElement('table');
-
-        Object.keys(this._table.style).forEach(prop => {
-          if(this._table.style[prop] !== '') {
-            try {
-              newTable.style[prop] = this._table.style[prop];
-            } catch (e) {
-
-            }
-          }
-        });
-
-        newTable.id = 'fixed_head';
-        newTable.rules = 'all';
-        newTable.style.setProperty('width', `${this._table.clientWidth}px`);
-        newTable.style.position = 'fixed';
-        newTable.style.left = '-9999px';
-        newTable.className = `${this._table.className} ${fixedHeadClass}`;
-
-        const cln = fThead.cloneNode(true);
-        const cth = cln.querySelectorAll('th');
-        const fth = fThead.querySelectorAll('th');
-        for (let i = 0; i < fth.length; i++) {
-          cth[i].style.width = `${fth[i].clientWidth + (window.opera ? 1 : 0) + 2}px`;
-        }
-        newTable.appendChild(cln);
-        this._tableWrapper.appendChild(newTable);
-        this.newTable = newTable;
-        this.checkPosition();
-      }
-    }
-  }
-
-  removeFixed() {
-    if (this._tableWrapper !== undefined && this.newTable !== null) {
-      this._tableWrapper.removeChild(this.newTable);
-      this.newTable = null;
-    }
-  }
-
   render() {
-    const { columnsMetadata, groupBy, pagination, fixedTableHead, infinityScroll, maxItems } = this.props;
+    const { groupBy, pagination, fixedTableHead, infinityScroll, maxItems, depthChildrenKey, useDefaultStyles } = this.props;
     const { sortBy, sortDir, groupBySort, currentPage, pageSize, rows } = this.state;
     const renderColumns = this.getRenderColumns();
     let data = this.getGroupRows();
@@ -361,31 +277,28 @@ class PivotGriddle extends Component {
       maxPages = Math.ceil(maxItems / pageSize);
     }
     const paginator = this.renderPaginator(currentPage, maxPages);
+    let wrapperClass;
+    if (useDefaultStyles) {
+      wrapperClass = styles.tableWrapper;
+    }
     return (
       <div
-        className="tableWrapper"
-        ref={(el) => { this._tableWrapper = el; }}
+        className={wrapperClass}
       >
-        <table
-          ref={(el) => { this._table = el; }}
-          className={this.props.customTableClass}
-        >
-          <PivotGriddleHeader
-            columns={renderColumns}
-            columnsMetadata={columnsMetadata}
-            onSortChange={(key) => this.onSortChange(key)}
-            sortBy={sortBy}
-            sortDir={sortDir}
-            groupBySort={groupBySort}
-            groupBy={groupBy}
-            ref={(el) => { this._tableHead = el; }}
-          />
-          <PivotGriddleBody
-            rows={data}
-            columns={renderColumns}
-            groupBy={groupBy}
-          />
-        </table>
+        <PivotGriddleTable
+          renderColumns={renderColumns}
+          columnsMetadata={this.props.columnsMetadata}
+          sortBy={sortBy}
+          sortDir={sortDir}
+          groupBySort={groupBySort}
+          groupBy={groupBy}
+          onSortChange={(key) => this.onSortChange(key)}
+          customTableClass={this.props.customTableClass}
+          rows={data}
+          depthChildrenKey={depthChildrenKey}
+          fixedTableHead={fixedTableHead}
+          fixedHeadOffset={this.props.fixedHeadOffset}
+        />
         <ul className="pagination">
           {
             paginator

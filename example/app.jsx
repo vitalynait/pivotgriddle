@@ -3,7 +3,6 @@ import PivotGriddle from '../lib/PivotGriddle/PivotGriddle';
 import fakedata from './data/fakedataflat';
 import getData from './utils/generateData';
 import gost from '../lib/PivotGriddle/utils';
-import 'bootstrap-css-only';
 
 import './main.scss';
 
@@ -22,10 +21,42 @@ function EventManager() {
 }
 window.EM = new EventManager();
 
+const fakes = [
+  {
+    id: 1,
+    name: 'name',
+    rows: [
+      {
+        id: 2,
+        name: '2',
+      },
+      {
+        id: 1,
+        name: '2',
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: 'name',
+  },
+  {
+    id: 4,
+    name: 'name 4',
+  },
+];
+const calculation = [
+  {
+    column: 'id',
+    calculation: 'sum',
+  },
+];
+
 const columns = [
   {
     column: 'list',
     displayName: 'Lists',
+    calculation: 'sum',
   },
   {
     column: 'name',
@@ -57,10 +88,14 @@ const columns = [
 class App extends React.Component {
   constructor(props) {
     super(props);
-    const initialData = getData(100);
+    let initialData = getData(100);
+    // initialData = initialData.map(item => {
+    //   item.rows = getData(2);
+    //   return item;
+    // });
     this.state = {
       fixedTableHead: false,
-      data: initialData,
+      data: fakes,
       pageSize: 40,
       sortBy: 'name',
       sortDir: 'asc',
@@ -103,14 +138,16 @@ class App extends React.Component {
           {this.state.fixedTableHead ? 'фикс' : 'нефикс'}
         </div>
         <PivotGriddle
-          columns={columns}
+          columns={calculation}
           rows={data}
           groupBy={groupBy}
           pageSize={pageSize}
           maxItems={this.state.data.length}
-          customTableClass="table table-bordered"
+          useDefaultStyles
+          customTableClass=""
           pagination
           fixedTableHead={this.state.fixedTableHead}
+          depthChildrenKey="rows"
         />
       </div>
     );
