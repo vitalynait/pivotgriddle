@@ -25,7 +25,7 @@ const columns = [
   },
   {
     column: 'id',
-    calculation: 'sum',
+    calculation: 'avg',
   },
 ];
 

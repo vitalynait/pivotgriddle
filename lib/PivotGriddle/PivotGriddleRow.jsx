@@ -97,7 +97,14 @@ class PivotGriddleRow extends Component {
   }
   renderCell(row, cell, rowSpan, parentRow = false) {
     let value = getValue(cell, row, parentRow);
-    if (cell.template && typeof value !== 'undefined') value = cell.template(value, row);
+    if (cell.template && typeof value !== 'undefined') {
+      if (cell.template.prototype instanceof React.Component) {
+        const Template = cell.template;
+        value = <Template value={value} row={row} />;
+      } else if (typeof cell.template === 'function') {
+        value = cell.template(value, row);
+      }
+    }
     const groupBy = !parentRow ? this.props.groupBy : false;
     return (
       <PivotGriddleCell

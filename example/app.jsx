@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { HashRouter as Router, Route } from 'react-router-dom';
 import getData from './utils/generateData';
 import gost from '../lib/PivotGriddle/utils';
 
@@ -12,8 +12,7 @@ import Sostav from './containers/Sostav';
 import Hierarchical from './containers/Hierarchical';
 import SidebarNav from './ui/SidebarNav';
 
-import './semantic.scss';
-import './main.scss';
+import './assets/main.scss';
 
 function EventManager() {
   this.addEvent = function (object, type, callback) {

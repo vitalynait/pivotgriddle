@@ -3,8 +3,10 @@ import PivotGriddle from '../../lib/PivotGriddle/PivotGriddle';
 
 import data from '../data/basic';
 
-const TemplateEmail = (value) => {
-  return <a href={`mailto:${value}`}>{value}</a>;
+class TemplateEmail extends Component {
+  render() {
+    return <a href={`mailto:${this.props.value}`}>{this.props.value}</a>;
+  }
 };
 
 class ValueComponent extends Component {
@@ -34,7 +36,7 @@ const columns = [
   {
     column: 'valueComponent',
     value: ValueComponent,
-  }
+  },
 ];
 
 class TemplateColumn extends Component {

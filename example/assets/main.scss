@@ -1,3 +1,5 @@
+@import "./reset.css";
+
 body {
   margin: 0;
   padding: 0;
@@ -21,3 +23,5 @@ body {
   float: left;
   padding-left: 30px;
 }
+
+@import "./semantic.scss";
