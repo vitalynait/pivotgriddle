@@ -18,6 +18,9 @@ class SidebarNav extends Component {
           <Link className="item violet" to="/grouprow">Группировка строк</Link>
           <Link className="item violet" to="/sostav">Составная шапка и данные</Link>
           <Link className="item violet" to="/hierarchical">Иерархическая таблица</Link>
+          <Link className="item violet" to="/custompagechange">Кастомная пагинация</Link>
+          <Link className="item violet" to="/onlymetacolumns">Только колонки из настроек</Link>
+          <Link className="item violet" to="/fixedhead">Фиксированная шапка</Link>
         </div>
       </div>
     );

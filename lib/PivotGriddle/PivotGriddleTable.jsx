@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import { autobind } from 'core-decorators';
 import ResizeObserver from 'resize-observer-polyfill';
 
@@ -205,7 +204,7 @@ class PivotGriddleTable extends Component {
     return (
       <table
           ref={(el) => { this._table = el; }}
-          className={this.props.customTableClass}
+          className={`sortable ${this.props.customTableClass}`}
         >
         <PivotGriddleHeader
           columns={this.props.renderColumns}

@@ -1,11 +1,11 @@
 const data = [
   {
-    "first_name": "Crystal",
     "index": 0,
     "isActive": true,
     "balance": 3728,
     "age": 26,
     "eyeColor": "brown",
+    "first_name": "Crystal",
     "last_name": "Wynn",
     "gender": "female",
     "email": "crystalwynn@hivedom.com",

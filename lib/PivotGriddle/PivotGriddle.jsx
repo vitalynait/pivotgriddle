@@ -24,14 +24,13 @@ class PivotGriddle extends Component {
     page: false,
     customTableClass: '',
     fixedTableHead: false,
-    fixedHeadOffset: 20,
+    fixedHeadOffset: 0,
     fixedHeadClass: '',
     customPageChange: false,
     customSort: false,
     infinityScroll: false,
     maxItems: false,
-    calculation: true,
-    useDefaultStyles: false,
+    findRowColumns: true,
   }
   constructor(props) {
     super(props);
@@ -53,7 +52,7 @@ class PivotGriddle extends Component {
   }
 
   getRenderColumns() {
-    const { columns, hiddenColumns, groupChildrenKey, groupBy, depthChildrenKey } = this.props;
+    const { columns, hiddenColumns, groupChildrenKey, groupBy, depthChildrenKey, findRowColumns } = this.props;
     const { rows } = this.state;
     const removableColumns = columns.filter(col => hiddenColumns.indexOf(col.column) === -1);
     const getColumns = (row, iArr = []) => {
@@ -78,7 +77,7 @@ class PivotGriddle extends Component {
       });
       return iArr;
     }
-    const split = getColumns(rows[0]);
+    const split = findRowColumns ? getColumns(rows[0]) : [...columns];
     const renderColumns = [];
     if (depthChildrenKey) {
       renderColumns.push({
@@ -86,9 +85,9 @@ class PivotGriddle extends Component {
         displayName: '',
       });
     }
-    split.forEach(col => {
+    split.forEach((col, idx) => {
       let idxCustom;
-      if (typeof col !== 'object') {
+      if (typeof col !== 'object' && findRowColumns) {
         idxCustom = removableColumns.findIndex(item => item.column === col);
         if (idxCustom >= 0) {
           if (col === groupBy) {
@@ -104,7 +103,7 @@ class PivotGriddle extends Component {
             renderColumns.push({ column: col });
           }
         }
-      } else if (typeof col === 'object') {
+      } else if (typeof col === 'object' && findRowColumns) {
         idxCustom = removableColumns.findIndex(item => item.column === col.column);
         let colObj = {
           column: col.column,
@@ -133,6 +132,13 @@ class PivotGriddle extends Component {
           });
         }
         renderColumns.push(colObj);
+      } else if (!findRowColumns) {
+        if (col.column === groupBy) {
+          renderColumns.unshift(col);
+        } else {
+          renderColumns.push(col);
+        }
+        removableColumns.splice(idx);
       }
     });
     removableColumns.forEach(item => {
@@ -247,6 +253,8 @@ class PivotGriddle extends Component {
       }
       obj.currentPage = data.page;
       obj.pageSize = data.pageSize;
+      if (data.sortBy) obj.sortBy = data.sortBy;
+      if (data.sortDir) obj.sortDir = data.sortDir;
     } else {
       obj.currentPage = nextPage;
     }
@@ -275,7 +283,7 @@ class PivotGriddle extends Component {
   }
 
   render() {
-    const { groupBy, pagination, fixedTableHead, infinityScroll, maxItems, depthChildrenKey, useDefaultStyles } = this.props;
+    const { groupBy, pagination, fixedTableHead, infinityScroll, maxItems, depthChildrenKey } = this.props;
     const { sortBy, sortDir, groupBySort, currentPage, pageSize, rows } = this.state;
     const renderColumns = this.getRenderColumns();
     let data = this.getGroupRows();
@@ -284,14 +292,8 @@ class PivotGriddle extends Component {
       maxPages = Math.ceil(maxItems / pageSize);
     }
     const paginator = this.renderPaginator(currentPage, maxPages);
-    let wrapperClass;
-    if (useDefaultStyles) {
-      wrapperClass = styles.tableWrapper;
-    }
     return (
-      <div
-        className={wrapperClass}
-      >
+      <div>
         <PivotGriddleTable
           renderColumns={renderColumns}
           columnsMetadata={this.props.columnsMetadata}

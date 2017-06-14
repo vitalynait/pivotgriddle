@@ -1,5 +1,9 @@
 @import "./reset.css";
 
+@import './icon.css';
+
+@import './button.css';
+
 body {
   margin: 0;
   padding: 0;
@@ -22,6 +26,10 @@ body {
   width: 70%;
   float: left;
   padding-left: 30px;
+}
+#fixed_head {
+  top: 0px;
+  margin-top: 0px;
 }
 
 @import "./semantic.scss";
