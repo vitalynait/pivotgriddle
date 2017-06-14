@@ -7,20 +7,29 @@ class SidebarNav extends Component {
   render() {
     return (
       <div
-        className="sidebar-box"
+        className="four wide column"
       >
-        <h2>Навигация</h2>
+        <h3>Документация</h3>
         <div className="ui secondary vertical menu">
-          <Link className="item violet" exact to="/">Базовая</Link>
-          <Link className="item violet" to="/templatecolumn">Шаблон ячейки</Link>
-          <Link className="item violet" to="/noninitialcolumn">Генерируемая ячейка</Link>
-          <Link className="item violet" to="/hiddencolumn">Скрытие ячеек</Link>
-          <Link className="item violet" to="/grouprow">Группировка строк</Link>
-          <Link className="item violet" to="/sostav">Составная шапка и данные</Link>
-          <Link className="item violet" to="/hierarchical">Иерархическая таблица</Link>
-          <Link className="item violet" to="/custompagechange">Кастомная пагинация</Link>
-          <Link className="item violet" to="/onlymetacolumns">Только колонки из настроек</Link>
-          <Link className="item violet" to="/fixedhead">Фиксированная шапка</Link>
+          <Link className="item violet" exact to="/docs/main">Основные параметры</Link>
+          <Link className="item violet" exact to="/docs/custom">Кастомизация таблицы</Link>
+          <Link className="item violet" exact to="/docs/columns">Структура колонок</Link>
+          <Link className="item violet" exact to="/docs/rows">Структура строк</Link>
+        </div>
+        <h3>Примеры</h3>
+        <div className="ui secondary vertical menu">
+          <Link className="item violet" exact to="/examples/">Базовая</Link>
+          <Link className="item violet" to="/examples/templatecolumn">Шаблон ячейки</Link>
+          <Link className="item violet" to="/examples/noninitialcolumn">Генерируемая ячейка</Link>
+          <Link className="item violet" to="/examples/hiddencolumn">Скрытие ячеек</Link>
+          <Link className="item violet" to="/examples/grouprow">Группировка строк</Link>
+          <Link className="item violet" to="/examples/sostav">Составная шапка и данные</Link>
+          <Link className="item violet" to="/examples/hierarchical">Иерархическая таблица</Link>
+          <Link className="item violet" to="/examples/onlymetacolumns">Только колонки из настроек</Link>
+          <Link className="item violet" to="/examples/fixedhead">Фиксированная шапка</Link>
+          <Link className="item violet" to="/examples/custompagechange">Кастомная пагинация</Link>
+          <Link className="item violet" to="/examples/customsortchange">Кастомная сортировка</Link>
+          <Link className="item violet" to="/examples/customsortpagechange">Кастомная сортировка и пагинация</Link>
         </div>
       </div>
     );

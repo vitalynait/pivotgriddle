@@ -27,7 +27,7 @@ class PivotGriddle extends Component {
     fixedHeadOffset: 0,
     fixedHeadClass: '',
     customPageChange: false,
-    customSort: false,
+    customSortChange: false,
     infinityScroll: false,
     maxItems: false,
     findRowColumns: true,
@@ -44,6 +44,7 @@ class PivotGriddle extends Component {
       currentPage,
       pageSize,
       rows: props.rows,
+      maxItems: props.maxItems,
     }
   }
 
@@ -77,7 +78,7 @@ class PivotGriddle extends Component {
       });
       return iArr;
     }
-    const split = findRowColumns ? getColumns(rows[0]) : [...columns];
+    const split = findRowColumns && rows.length >= 1 ? getColumns(rows[0]) : [...columns];
     const renderColumns = [];
     if (depthChildrenKey) {
       renderColumns.push({
@@ -210,20 +211,22 @@ class PivotGriddle extends Component {
     return sortableRows;
   }
   onSortChange(key) {
-    const { groupBy, customSort, depthChildrenKey } = this.props;
-    const { sortBy, sortDir, groupBySort } = this.state;
+    const { groupBy, customSortChange, depthChildrenKey } = this.props;
+    const { sortBy, sortDir, groupBySort, currentPage, pageSize } = this.state;
     const state = {};
-    if (customSort) {
+    if (customSortChange) {
+      const data = customSortChange(key, currentPage, pageSize);
       if (key === groupBy) {
-        const data = customSort(key, groupBySort);
         state.groupBySort = data.sortDir;
         state.rows = data.rows;
       } else {
-        const data = customSort(key, sortDir);
         state.sortBy = data.sortBy;
         state.sortDir = data.sortDir;
         state.rows = data.rows;
       }
+      if (data.page) state.currentPage = data.page;
+      if (data.maxItems) state.maxItems = data.maxItems;
+      if (data.pageSize) state.pageSize = data.pageSize;
     } else {
       if (key === groupBy) {
         state.groupBySort = this.state.groupBySort === 'desc' ? 'asc' : 'desc';
@@ -283,9 +286,12 @@ class PivotGriddle extends Component {
   }
 
   render() {
-    const { groupBy, pagination, fixedTableHead, infinityScroll, maxItems, depthChildrenKey } = this.props;
-    const { sortBy, sortDir, groupBySort, currentPage, pageSize, rows } = this.state;
+    const { groupBy, pagination, fixedTableHead, infinityScroll, depthChildrenKey } = this.props;
+    const { sortBy, sortDir, groupBySort, currentPage, pageSize, rows, maxItems } = this.state;
     const renderColumns = this.getRenderColumns();
+    if (renderColumns.length <= 0) {
+      return <div><table className={this.props.customTableClass}><tr><td>Нет данных</td></tr></table></div>;
+    }
     let data = this.getGroupRows();
     let maxPages = Math.ceil(rows.length / pageSize);
     if (maxItems && this.props.customPageChange){
@@ -308,11 +314,14 @@ class PivotGriddle extends Component {
           fixedTableHead={fixedTableHead}
           fixedHeadOffset={this.props.fixedHeadOffset}
         />
-        <div className="ui pagination menu compact">
-          {
-            paginator
-          }
-        </div>
+        {
+          !!paginator && paginator.length >= 1 &&
+          <div className="ui pagination menu compact">
+            {
+              paginator
+            }
+          </div>
+        }
       </div>
     );
   }

@@ -1,8 +1,4 @@
-@import "./reset.css";
-
-@import './icon.css';
-
-@import './button.css';
+@import "./index.scss";
 
 body {
   margin: 0;
@@ -11,10 +7,6 @@ body {
 }
 * {
   box-sizing: inherit;
-}
-.documentWrapper {
-  width: 70%;
-  margin: 0 auto;
 }
 .sidebar-box {
   width: 20%;

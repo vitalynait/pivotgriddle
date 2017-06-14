@@ -137,6 +137,7 @@ class PivotGriddleTable extends Component {
   }
   createRows() {
     const { rows, renderColumns, groupBy, depthChildrenKey } = this.props;
+    if (rows.length <= 0) return false;
     const renderer = [];
     let rowKey = 0;
     const calcCol = renderColumns.filter(col => !!col.calculation);
@@ -218,6 +219,19 @@ class PivotGriddleTable extends Component {
         />
         {
           rows
+        }
+        {
+          !rows &&
+            <tr
+              className="no-data"
+            >
+              <td
+                colSpan={this.props.renderColumns.length}
+                align="center"
+              >
+                Нет данных
+              </td>
+            </tr>
         }
       </table>
     );
