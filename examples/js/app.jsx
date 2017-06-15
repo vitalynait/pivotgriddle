@@ -2,9 +2,8 @@ import React from 'react';
 import { HashRouter as Router, Route, Link } from 'react-router-dom';
 
 import * as Examples from './containers';
+import * as Docs from './docs';
 import SidebarNav from './ui/SidebarNav';
-
-import DocMain from './docs/Main';
 
 import './assets/main.scss';
 
@@ -14,15 +13,15 @@ class App extends React.Component {
       <Router>
         <div className="ui container">
           <div className="ui header">
-            <h2><Link exact to="/">PivotGriddle</Link></h2>
+            <h2><Link to="/">PivotGriddle</Link></h2>
           </div>
           <div className="ui grid stackable">
             <SidebarNav />
             <div
               className="twelve wide column"
             >
-              <Route exact path="/" component={DocMain} />
-              <Route exact path="/docs/main" component={DocMain} />
+              <Route exact path="/" component={Docs.About} />
+              <Route exact path="/docs/" component={Docs.Main} />
               <Route exact path="/examples/" component={Examples.Basic} />
               <Route exact path="/examples/templatecolumn" component={Examples.TemplateColumn} />
               <Route exact path="/examples/noninitialcolumn" component={Examples.NonInitialColumn} />

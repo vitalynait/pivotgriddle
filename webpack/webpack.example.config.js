@@ -7,11 +7,12 @@ const sharedConfig = require('./webpack.config.shared.js');
 module.exports = {
   entry: {
     app: [
-      'react-hot-loader/patch',
+      `webpack-dev-server/client?http://${appConfig.host}:${appConfig.port}`,
+      'webpack/hot/only-dev-server',
       './examples/js/index.js',
     ],
-    vendors: [`webpack-dev-server/client?http://localhost:${appConfig.port}`, 'webpack/hot/only-dev-server'],
   },
+  context: path.resolve(__dirname, '..'),
   devtool: '#eval-source-map',
   output: {
     path: path.join(__dirname, 'examples'),
@@ -19,54 +20,35 @@ module.exports = {
     publicPath: '/',
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    root: __dirname,
+    extensions: ['', '.js', '.jsx', '.json', '.ts', '.tsx'],
     alias: {
       'pivot-griddle': path.resolve(__dirname, '../src'),
     },
   },
   module: {
-    rules: [
-      ...sharedConfig.module.rules,
+    loaders: [
+      ...sharedConfig.module.loaders,
+      { test: /\.json$/, loader: 'json-loader' },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              cacheDirectory: true,
-            },
-          },
-        ],
+        loaders: ['react-hot', 'babel-loader?cacheDirectory'],
       },
       {
         test: /\.s?css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
-              modules: true,
-              importLoaders: 1,
-              localIdentName: '[local]',
-            },
-          },
-          'resolve-url-loader',
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
+        loaders: [
+          'style',
+          'css-loader?sourceMap&modules&importLoaders=1&localIdentName=[local]',
+          'resolve-url',
+          'sass-loader?sourceMap',
         ],
       },
     ],
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.IgnorePlugin(/\.json$/),
-    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.NoErrorsPlugin(),
     new webpack.ProgressPlugin((percentage, message) => {
       const percent = Math.round(percentage * 100);
       process.stderr.clearLine();

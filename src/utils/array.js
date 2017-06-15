@@ -1,11 +1,12 @@
 
-export const compareKey = function (a, b, key) {
+export const compareKey = (a, b, key) => {
   if (!isNaN(a[key])) a[key] = a[key].toString();
   if (!isNaN(b[key])) b[key] = b[key].toString();
 
   const alist = a[key].split(/(\d+)/);
   const blist = b[key].split(/(\d+)/);
 
+  /* eslint-disable */
   alist.slice(-1) === '' ? alist.pop() : null;
   blist.slice(-1) === '' ? blist.pop() : null;
 
@@ -18,11 +19,12 @@ export const compareKey = function (a, b, key) {
       }
     }
   }
+  /* eslint-enable */
 
   return true;
 };
 
-export const sortDir = function (arr, dir, key) {
+export const sortDir = (arr, dir, key) => {
   if (dir === 'asc') {
     arr.sort((a, b) => this.compareKey(a, b, key));
   } else if (dir === 'desc') {

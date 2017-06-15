@@ -40,12 +40,14 @@ gulp.task('example-server', () => {
     publicPath: exampleConfig.output.publicPath,
     contentBase: 'examples/',
     hot: true,
+    inline: true,
+    lazy: false,
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
     stats: {
       assets: true,
-      color: true,
+      colors: true,
       version: false,
       hash: false,
       timings: true,

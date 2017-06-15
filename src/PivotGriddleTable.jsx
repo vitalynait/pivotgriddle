@@ -5,17 +5,6 @@ import ResizeObserver from 'resize-observer-polyfill';
 import PivotGriddleHeader from './PivotGriddleHeader';
 import PivotGriddleRow from './PivotGriddleRow';
 
-const getValue = (col, row, parentRow = null) => {
-  if (col === null) return null;
-  let value;
-  if (col.value && typeof col.value === "function") {
-    value = col.value(row, parentRow);
-  } else {
-    value = row[col.column];
-  }
-  return value;
-}
-
 class PivotGriddleTable extends Component {
   constructor(props) {
     super(props);
@@ -35,7 +24,7 @@ class PivotGriddleTable extends Component {
     });
   }
 
-  componentDidMount(){
+  componentDidMount() {
     if (this._tableWrapper === null) this._tableWrapper = this._table.parentNode;
     if (this.props.fixedTableHead) {
       this.fixHead();
@@ -47,7 +36,7 @@ class PivotGriddleTable extends Component {
   componentWillReceiveProps(newProps) {
     if (newProps.fixedTableHead) {
       this.fixHead(newProps);
-    } else if (this.props.fixedTableHead && !newProps.fixedTableHead){
+    } else if (this.props.fixedTableHead && !newProps.fixedTableHead) {
       this.removeFixed();
     }
     this.checkListener(newProps);
@@ -55,7 +44,6 @@ class PivotGriddleTable extends Component {
   }
 
   checkListener(props = this.props) {
-    const { fixedHeadOffset } = props;
     if (props.fixedTableHead) {
       document.addEventListener('scroll', this.checkPosition.bind(this));
       window.addEventListener('resize', this.checkPosition.bind(this));
@@ -80,22 +68,21 @@ class PivotGriddleTable extends Component {
   }
 
   fixHead(props = this.props) {
-    const { fixedHeadOffset, fixedHeadClass } = props;
-    let tmp;
+    const { fixedHeadClass } = props;
     if (this._table && props.fixedTableHead) {
       this.removeFixed();
 
       const fThead = this._table.querySelector('thead');
 
       if (fThead) {
-        let newTable = document.createElement('table');
+        const newTable = document.createElement('table');
 
-        Object.keys(this._table.style).forEach(prop => {
-          if(this._table.style[prop] !== '') {
+        Object.keys(this._table.style).forEach((prop) => {
+          if (this._table.style[prop] !== '') {
             try {
               newTable.style[prop] = this._table.style[prop];
             } catch (e) {
-
+              console.log(e); // eslint-disable-line no-console
             }
           }
         });
@@ -128,7 +115,7 @@ class PivotGriddleTable extends Component {
     }
   }
 
-  renderRow(row, columns, rowSpan = false, wrapping = false, totalRow = false) {
+  renderRow(row, columns, key, rowSpan = false, wrapping = false, totalRow = false) {
     return (
       <PivotGriddleRow
         row={row}
@@ -138,29 +125,32 @@ class PivotGriddleTable extends Component {
         depthChildrenKey={this.props.depthChildrenKey}
         wrapping={wrapping}
         totalRow={totalRow}
+        rowKey={key}
       />
-    )
+    );
   }
+
   createRows() {
     const { rows, renderColumns, groupBy, depthChildrenKey } = this.props;
     if (rows.length <= 0) return false;
     const renderer = [];
-    let rowKey = 0;
     const calcCol = renderColumns.filter(col => !!col.calculation);
-    const calc = (prev, curr, key) => {
-      let next = {
+    const calc = (prev, curr) => {
+      const next = {
         ...prev,
       };
       if (!next.count) next.count = 0;
       if (!next.sum) next.sum = 0;
       next.count += 1;
-      next.sum = parseInt(next.sum, 10) + parseInt(curr);
+      next.sum = parseInt(next.sum, 10) + parseInt(curr, 10);
       next.min = next.min < curr ? next.min : curr;
       next.max = next.max > curr ? next.max : curr;
       return next;
-    }
-    rows.map(row => {
+    };
+    rows.forEach((row, idx) => {
       const grouping = groupBy && row.children;
+      const baseKey = `row-${idx}`;
+      let key = baseKey;
       if (grouping) {
         const groupRows = [];
         const firstRow = row.children[0];
@@ -172,33 +162,34 @@ class PivotGriddleTable extends Component {
         if (calcCol.length >= 1 && row.children.length >= 2) {
           totals = {};
           totals[groupBy] = 'ИТОГО:';
-          totals['$type'] = 'total';
           totals = row.children.reduce((prev, curr) => {
             const next = {
               ...prev,
-            }
-            calcCol.forEach(col => {
+            };
+            calcCol.forEach((col) => {
               next[col.column] = calc(prev[col.column], curr[col.column]);
             });
             return next;
           }, totals);
         }
-        groupRows.push(this.renderRow(firstRow, renderColumns, rowSpan));
-        childRows.forEach(childRow => {
-          groupRows.push(this.renderRow(childRow, childColumns, false));
+        groupRows.push(this.renderRow(firstRow, renderColumns, key, rowSpan));
+        childRows.forEach((childRow, cidx) => {
+          key = `${baseKey}-${cidx}`;
+          groupRows.push(this.renderRow(childRow, childColumns, key, false));
         });
         if (totals) {
-          groupRows.push(this.renderRow(totals, renderColumns, false, false, true));
+          key = `row-${idx}-total`;
+          groupRows.push(this.renderRow(totals, renderColumns, key, false, false, true));
         }
-        renderer.push(<tbody>{groupRows}</tbody>);
+        renderer.push(<tbody key={`tbody-${idx}`}>{groupRows}</tbody>);
       } else if (groupBy) {
         const groupingColumns = renderColumns.filter(item => item.column !== groupBy);
         groupingColumns.unshift(...renderColumns.filter(item => item.column === groupBy));
-        renderer.push(this.renderRow(row, rowKey, groupingColumns));
+        renderer.push(this.renderRow(row, groupingColumns, key));
       } else {
-        let rrows = this.renderRow(row, renderColumns, false);
+        let rrows = this.renderRow(row, renderColumns, key, false);
         if (!depthChildrenKey) {
-          rrows = <tbody>{rrows}</tbody>;
+          rrows = <tbody key={`tbody-${idx}`}>{rrows}</tbody>;
         }
         renderer.push(rrows);
       }
@@ -208,14 +199,14 @@ class PivotGriddleTable extends Component {
 
   render() {
     const rows = this.createRows();
+    const { renderColumns } = this.props;
     return (
       <table
-          ref={(el) => { this._table = el; }}
-          className={`sortable ${this.props.customTableClass}`}
-        >
+        ref={(el) => { this._table = el; }}
+        className={`sortable ${this.props.customTableClass}`}
+      >
         <PivotGriddleHeader
-          columns={this.props.renderColumns}
-          columnsMetadata={this.props.columnsMetadata}
+          columns={renderColumns}
           onSortChange={this.props.onSortChange}
           sortBy={this.props.sortBy}
           sortDir={this.props.sortDir}
@@ -232,7 +223,7 @@ class PivotGriddleTable extends Component {
               className="no-data"
             >
               <td
-                colSpan={this.props.renderColumns.length}
+                colSpan={renderColumns.length}
                 align="center"
               >
                 Нет данных
@@ -243,5 +234,31 @@ class PivotGriddleTable extends Component {
     );
   }
 }
+
+PivotGriddleTable.propTypes = {
+  fixedTableHead: PropTypes.bool.isRequired,
+  fixedHeadOffset: PropTypes.number.isRequired,
+  groupBy: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.string,
+  ]).isRequired,
+  depthChildrenKey: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.string,
+  ]).isRequired,
+  rows: PropTypes.array.isRequired,
+  customTableClass: PropTypes.string.isRequired,
+  sortBy: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.string,
+  ]).isRequired,
+  sortDir: PropTypes.string.isRequired,
+  groupBySort: PropTypes.string.isRequired,
+  onSortChange: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.bool,
+  ]).isRequired,
+  renderColumns: PropTypes.array.isRequired,
+};
 
 export default PivotGriddleTable;

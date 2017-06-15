@@ -11,14 +11,14 @@ class SidebarNav extends Component {
       >
         <h3>Документация</h3>
         <div className="ui secondary vertical menu">
-          <Link className="item violet" exact to="/docs/main">Основные параметры</Link>
-          <Link className="item violet" exact to="/docs/custom">Кастомизация таблицы</Link>
-          <Link className="item violet" exact to="/docs/columns">Структура колонок</Link>
-          <Link className="item violet" exact to="/docs/rows">Структура строк</Link>
+          <Link exact className="item violet" to="/docs/">Основные параметры</Link>
+          <Link className="item violet" to="/docs/custom">Кастомизация таблицы</Link>
+          <Link className="item violet" to="/docs/columns">Структура колонок</Link>
+          <Link className="item violet" to="/docs/rows">Структура строк</Link>
         </div>
         <h3>Примеры</h3>
         <div className="ui secondary vertical menu">
-          <Link className="item violet" exact to="/examples/">Базовая</Link>
+          <Link exact className="item violet" to="/examples/">Базовая</Link>
           <Link className="item violet" to="/examples/templatecolumn">Шаблон ячейки</Link>
           <Link className="item violet" to="/examples/noninitialcolumn">Генерируемая ячейка</Link>
           <Link className="item violet" to="/examples/hiddencolumn">Скрытие ячеек</Link>
