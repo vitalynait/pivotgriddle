@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
-import { autobind } from 'core-decorators';
 
-// import PivotGriddleHeader from './PivotGriddleHeader';
 import PivotGriddleTable from './PivotGriddleTable';
 import gost from './utils';
 
-import styles from './styles/main.scss';
-
-@autobind
 class PivotGriddle extends Component {
   static defaultProps = {
     columns: [],
@@ -46,6 +40,13 @@ class PivotGriddle extends Component {
       rows: props.rows,
       maxItems: props.maxItems,
     }
+
+    this.getRenderColumns = this.getRenderColumns.bind(this);
+    this.getGroupRows = this.getGroupRows.bind(this);
+    this.sortingRows = this.sortingRows.bind(this);
+    this.onSortChange = this.onSortChange.bind(this);
+    this.onPageChange = this.onPageChange.bind(this);
+    this.renderPaginator = this.renderPaginator.bind(this);
   }
 
   componentDidMount() {
@@ -117,7 +118,10 @@ class PivotGriddle extends Component {
             children: [],
           };
           col.children.forEach(colChild => {
-            const childCustom = get(removableColumns[idxCustom], 'children', []);
+            let childCustom = [];
+            if (removableColumns[idxCustom] && removableColumns[idxCustom].children && Array.isArray(removableColumns[idxCustom].children)) {
+              childCustom = removableColumns[idxCustom].children || [];
+            }
             const childIdx = childCustom.findIndex(item => item.column === colChild);
             if (childIdx >= 0) {
               colObj.children.push(childCustom[childIdx]);
@@ -210,6 +214,7 @@ class PivotGriddle extends Component {
     }
     return sortableRows;
   }
+
   onSortChange(key) {
     const { groupBy, customSortChange, depthChildrenKey } = this.props;
     const { sortBy, sortDir, groupBySort, currentPage, pageSize } = this.state;

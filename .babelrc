@@ -13,6 +13,7 @@
           "production": true
         }
       }
-    ]
+    ],
+    "react-hot-loader/babel"
   ]
 }

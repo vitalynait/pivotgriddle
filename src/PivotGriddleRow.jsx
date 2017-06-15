@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { autobind } from 'core-decorators';
 
 import PivotGriddleCell from './PivotGriddleCell';
 
@@ -19,7 +18,6 @@ const getValue = (col, row, parentRow = null) => {
   return value;
 }
 
-@autobind
 class PivotGriddleRow extends Component {
   constructor(props) {
     super(props);
@@ -27,6 +25,13 @@ class PivotGriddleRow extends Component {
     this.state = {
       showChild: false,
     };
+
+    this.onChildShow = this.onChildShow.bind(this);
+    this.renderRow = this.renderRow.bind(this);
+    this.renderShowChild = this.renderShowChild.bind(this);
+    this.renderDepthRow = this.renderDepthRow.bind(this);
+    this.renderCell = this.renderCell.bind(this);
+    this.renderTotalCell = this.renderTotalCell.bind(this);
   }
   onChildShow() {
     this.setState({

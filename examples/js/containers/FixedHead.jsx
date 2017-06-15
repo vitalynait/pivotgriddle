@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import PivotGriddle from '../../lib/PivotGriddle/PivotGriddle';
+import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/sostav';
 

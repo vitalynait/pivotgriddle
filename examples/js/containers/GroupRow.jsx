@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import 'react-select/scss/default.scss';
-import PivotGriddle from '../../lib/PivotGriddle/PivotGriddle';
+import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/basic';
 

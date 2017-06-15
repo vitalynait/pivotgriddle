@@ -1,29 +1,28 @@
 const path = require('path');
 const webpack = require('webpack');
 const appConfig = require('./config');
-const host = appConfig.host;
-const port = appConfig.port;
+
 const sharedConfig = require('./webpack.config.shared.js');
 
-const plugins = [
-  ...sharedConfig.plugins,
-];
-
 module.exports = {
-  devtool: 'eval',
-  context: sharedConfig.context,
   entry: {
     app: [
-      'webpack-dev-server/client?http://' + host + ':' + port,
-      'webpack/hot/only-dev-server',
-      './example/index.js',
+      'react-hot-loader/patch',
+      './examples/js/index.js',
     ],
+    vendors: [`webpack-dev-server/client?http://localhost:${appConfig.port}`, 'webpack/hot/only-dev-server'],
   },
+  devtool: '#eval-source-map',
   output: {
-    path: path.join(__dirname, '..', 'dist'),
-    publicPath: '/dist/',
-    filename: '[name].js',
-    chunkFilename: '[name].chunk.js',
+    path: path.join(__dirname, 'examples'),
+    filename: '[name].bundle.js',
+    publicPath: '/',
+  },
+  resolve: {
+    extensions: ['.js', '.jsx'],
+    alias: {
+      'pivot-griddle': path.resolve(__dirname, '../src'),
+    },
   },
   module: {
     rules: [
@@ -32,7 +31,6 @@ module.exports = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: [
-          'react-hot-loader',
           {
             loader: 'babel-loader',
             options: {
@@ -65,12 +63,15 @@ module.exports = {
       },
     ],
   },
-  resolve: sharedConfig.resolve,
   plugins: [
-    ...plugins,
-    new webpack.DefinePlugin(sharedConfig.definitions),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.IgnorePlugin(/\.json$/),
     new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.ProgressPlugin((percentage, message) => {
+      const percent = Math.round(percentage * 100);
+      process.stderr.clearLine();
+      process.stderr.cursorTo(0);
+      process.stderr.write(`${percent}% ${message}`);
+    }),
   ],
 };

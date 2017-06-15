@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import gost from './utils';
 
 class PivotGriddleHeader extends Component {
@@ -74,25 +73,24 @@ class PivotGriddleHeader extends Component {
     const { sortBy, sortDir, groupBy, groupBySort } = this.props;
     const columnName = col.column !== 'showChild' ? col.displayName || col.column : null;
     let groupDir;
-    const classRules = {};
+    let classRules = '';
     const elRules = {};
     const isGroup = col.column === groupBy;
     const isSorting = (!!sortDir && col.column === sortBy) || (!!groupBySort && isGroup);
     const iconCreate = isSorting ? isGroup ? groupBySort : sortDir : false;
     if (iconCreate) {
-      classRules[`sorted ${iconCreate === 'asc' ? 'descending' : 'ascending'}`] = true;
+      classRules = `${classRules} sorted ${iconCreate === 'asc' ? 'descending' : 'ascending'}`;
     }
     if (col.sortable) {
-      classRules.onSort = true;
+      classRules = `${classRules} onSort`;
       elRules.onClick = () => this.props.onSortChange(col.column);
     }
-    const classes = classNames('', classRules);
 
     const ccol = (
       <th
         rowSpan={col.rowSpan > 1 ? col.rowSpan : null}
         colSpan={col.colSpan > 1 ? col.colSpan : null}
-        className={classes}
+        className={classRules}
         key={col.column}
         {
           ...elRules

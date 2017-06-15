@@ -9,7 +9,10 @@ npm-debug.log*
 react-starterify
 node-server.js
 dist
+lib/
 bundle.json
 debug.log
 *.sublime-project
 *.sublime-workspace
+*~
+.vscode

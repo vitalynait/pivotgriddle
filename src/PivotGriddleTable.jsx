@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { autobind } from 'core-decorators';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import PivotGriddleHeader from './PivotGriddleHeader';
@@ -17,10 +16,17 @@ const getValue = (col, row, parentRow = null) => {
   return value;
 }
 
-@autobind
 class PivotGriddleTable extends Component {
   constructor(props) {
     super(props);
+
+    this.checkListener = this.checkListener.bind(this);
+    this.callObserver = this.callObserver.bind(this);
+    this.checkPosition = this.checkPosition.bind(this);
+    this.fixHead = this.fixHead.bind(this);
+    this.removeFixed = this.removeFixed.bind(this);
+    this.renderRow = this.renderRow.bind(this);
+    this.createRows = this.createRows.bind(this);
 
     this._tableWrapper = null;
     this.newTable = null;
