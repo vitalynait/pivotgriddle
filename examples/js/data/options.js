@@ -116,7 +116,7 @@ export default {
       props: 'maxItems',
       type: 'number',
       default: 'false',
-      description: 'Количество записей таблицы - для кастомной пагинации',
+      description: '<span style="color:red">Количество</span> записей таблицы - для кастомной пагинации',
     },
   ],
 };

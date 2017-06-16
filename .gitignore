@@ -8,8 +8,6 @@ npm-debug.log*
 *.iml
 react-starterify
 node-server.js
-dist
-lib/
 bundle.json
 debug.log
 *.sublime-project

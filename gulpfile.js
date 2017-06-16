@@ -21,8 +21,8 @@ gulp.task('prod', ['umdBuild'], () => {
     './src/**/*.js',
     './src/*js',
     './src/**/*.jsx',
-    './src/*jsx'
-    ])
+    './src/*jsx',
+  ])
     .pipe(babel())
     .pipe(gulp.dest('./lib'));
 });
