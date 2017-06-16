@@ -23,6 +23,8 @@ npm install
 npm start
 ```
 
+Open your browser, http://localhost:3000/ by default settings
+
 ### Build project
 
 Для использования пакета в npm его нужно сначала собрать!
@@ -34,7 +36,5 @@ npm run build
 ```
 
 Преобразованные файлы из папка src появятся в папке lib
-
-Open your browser, http://localhost:3000/ by default settings
 
 
