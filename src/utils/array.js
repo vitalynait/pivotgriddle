@@ -1,5 +1,5 @@
 
-export const compareKey = (a, b, key) => {
+export function compareKey(a, b, key) {
   if (!isNaN(a[key])) a[key] = a[key].toString();
   if (!isNaN(b[key])) b[key] = b[key].toString();
 
@@ -22,13 +22,13 @@ export const compareKey = (a, b, key) => {
   /* eslint-enable */
 
   return true;
-};
+}
 
-export const sortDir = (arr, dir, key) => {
+export function sortDir(arr, dir, key) {
   if (dir === 'asc') {
     arr.sort((a, b) => this.compareKey(a, b, key));
   } else if (dir === 'desc') {
     arr.sort((a, b) => this.compareKey(b, a, key));
   }
   return arr;
-};
+}
