@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Inview from 'react-inview';
 
 import PivotGriddleTable from './PivotGriddleTable';
 import gost from './utils';
@@ -81,6 +82,7 @@ class PivotGriddle extends Component {
       pageSize,
       rows: props.rows,
       maxItems: props.maxItems,
+      loading: false,
     };
 
     this.getRenderColumns = this.getRenderColumns.bind(this);
@@ -89,6 +91,7 @@ class PivotGriddle extends Component {
     this.onSortChange = this.onSortChange.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
     this.renderPaginator = this.renderPaginator.bind(this);
+    this.onScroll = this.onScroll.bind(this);
   }
 
   componentDidMount() {
@@ -236,6 +239,10 @@ class PivotGriddle extends Component {
       const start = end - pageSize;
       sortableRows = sortableRows.slice(start, end);
     }
+    if (infinityScroll) {
+      const end = pageSize * currentPage;
+      sortableRows = sortableRows.slice(0, end);
+    }
     if (groupBy) {
       const grouping = {};
       sortableRows.forEach((row) => {
@@ -291,6 +298,7 @@ class PivotGriddle extends Component {
   onPageChange(nextPage, pageSize) {
     const { customPageChange, infinityScroll } = this.props;
     const obj = {};
+    obj.loading = true;
     if (customPageChange && typeof customPageChange === 'function') {
       const data = customPageChange(nextPage, pageSize);
       if (infinityScroll) {
@@ -332,6 +340,11 @@ class PivotGriddle extends Component {
     return renderer;
   }
 
+  onScroll() {
+    const { currentPage, pageSize } = this.state;
+    this.onPageChange(currentPage + 1, pageSize);
+  }
+
   render() {
     const { groupBy, fixedTableHead, depthChildrenKey } = this.props;
     const { sortBy, sortDir, groupBySort, currentPage, pageSize, rows, maxItems } = this.state;
@@ -344,6 +357,7 @@ class PivotGriddle extends Component {
     if (maxItems && this.props.customPageChange) {
       maxPages = Math.ceil(maxItems / pageSize);
     }
+    const needScroll = !!this.props.infinityScroll && maxPages !== currentPage;
     const paginator = this.renderPaginator(currentPage, maxPages);
     return (
       <div>
@@ -362,7 +376,11 @@ class PivotGriddle extends Component {
           fixedHeadClass={this.props.fixedHeadClass}
         />
         {
-          !!paginator && paginator.length >= 1 &&
+          needScroll &&
+            <Inview onInview={this.onScroll} />
+        }
+        {
+          !!paginator && !this.props.infinityScroll && paginator.length >= 1 &&
           <div className="ui pagination menu compact">
             {
               paginator

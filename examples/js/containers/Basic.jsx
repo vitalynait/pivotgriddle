@@ -11,6 +11,7 @@ class Basic extends Component {
         rows={data.rows}
         pagination
         customTableClass="ui table celled"
+        infinityScroll
       />
     );
   }
