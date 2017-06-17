@@ -3,7 +3,7 @@ import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/basic';
 
-class Basic extends Component {
+class InfinityScroll extends Component {
   render() {
     return (
       <PivotGriddle
@@ -11,9 +11,10 @@ class Basic extends Component {
         rows={data.rows}
         pagination
         customTableClass="ui table celled"
+        infinityScroll
       />
     );
   }
 }
 
-export default Basic;
+export default InfinityScroll;
