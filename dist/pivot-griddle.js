@@ -12455,7 +12455,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (rowMetadata.templateRow.prototype instanceof _react2.default.Component) {
 	          var templateRow = rowMetadata.templateRow;
 
-	          console.log(rowMetadata);
 	          component = _react2.default.createElement('templateRow', props);
 	        } else if (typeof rowMetadata.templateRow === 'function') {
 	          component = rowMetadata.templateRow(props);
@@ -12463,7 +12462,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      } else {
 	        component = _react2.default.createElement(_PivotGriddleRow2.default, props);
 	      }
-	      console.log(component);
 	      return component;
 	    }
 	  }, {

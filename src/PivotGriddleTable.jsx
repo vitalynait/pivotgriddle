@@ -132,7 +132,6 @@ class PivotGriddleTable extends Component {
     if (rowMetadata && rowMetadata.templateRow) {
       if (rowMetadata.templateRow.prototype instanceof React.Component) {
         const { templateRow } = rowMetadata;
-        console.log(rowMetadata);
         component = <templateRow {...props} />;
       } else if (typeof rowMetadata.templateRow === 'function') {
         component = rowMetadata.templateRow(props);
@@ -140,7 +139,6 @@ class PivotGriddleTable extends Component {
     } else {
       component = <PivotGriddleRow {...props} />;
     }
-    console.log(component);
     return component;
   }
 
