@@ -46,6 +46,10 @@ class PivotGriddle extends Component {
       PropTypes.number,
     ]),
     findRowColumns: PropTypes.bool,
+    rowMetadata: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object,
+    ]),
   }
 
   static defaultProps = {
@@ -67,6 +71,7 @@ class PivotGriddle extends Component {
     infinityScroll: false,
     maxItems: false,
     findRowColumns: true,
+    rowMetadata: false,
   }
   constructor(props) {
     super(props);
@@ -375,6 +380,7 @@ class PivotGriddle extends Component {
           fixedTableHead={fixedTableHead}
           fixedHeadOffset={this.props.fixedHeadOffset}
           fixedHeadClass={this.props.fixedHeadClass}
+          rowMetadata={this.props.rowMetadata}
         />
         {
           needScroll &&

@@ -59,13 +59,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.PivotGriddleRow = undefined;
 
 	var _PivotGriddle = __webpack_require__(1);
 
 	var _PivotGriddle2 = _interopRequireDefault(_PivotGriddle);
 
+	var _PivotGriddleRow2 = __webpack_require__(22);
+
+	var _PivotGriddleRow3 = _interopRequireDefault(_PivotGriddleRow2);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	exports.PivotGriddleRow = _PivotGriddleRow3.default;
 	exports.default = _PivotGriddle2.default;
 
 /***/ }),
@@ -559,7 +565,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          depthChildrenKey: depthChildrenKey,
 	          fixedTableHead: fixedTableHead,
 	          fixedHeadOffset: this.props.fixedHeadOffset,
-	          fixedHeadClass: this.props.fixedHeadClass
+	          fixedHeadClass: this.props.fixedHeadClass,
+	          rowMetadata: this.props.rowMetadata
 	        }),
 	        needScroll && _react2.default.createElement(_reactInview2.default, { onInview: this.onScroll }),
 	        !!paginator && !this.props.infinityScroll && paginator.length >= 1 && _react2.default.createElement(
@@ -590,7 +597,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  customSortChange: _propTypes2.default.oneOfType([_propTypes2.default.bool, _propTypes2.default.func]),
 	  infinityScroll: _propTypes2.default.bool,
 	  maxItems: _propTypes2.default.oneOfType([_propTypes2.default.bool, _propTypes2.default.number]),
-	  findRowColumns: _propTypes2.default.bool
+	  findRowColumns: _propTypes2.default.bool,
+	  rowMetadata: _propTypes2.default.oneOfType([_propTypes2.default.bool, _propTypes2.default.object])
 	}, _class.defaultProps = {
 	  columns: [],
 	  hiddenColumns: [],
@@ -609,7 +617,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  customSortChange: false,
 	  infinityScroll: false,
 	  maxItems: false,
-	  findRowColumns: true
+	  findRowColumns: true,
+	  rowMetadata: false
 	}, _temp);
 	exports.default = PivotGriddle;
 
@@ -12428,8 +12437,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var rowSpan = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 	      var wrapping = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 	      var totalRow = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
+	      var rowMetadata = this.props.rowMetadata;
 
-	      return _react2.default.createElement(_PivotGriddleRow2.default, {
+	      var component = void 0;
+	      var props = {
 	        row: row,
 	        columns: columns,
 	        rowSpan: rowSpan,
@@ -12437,8 +12448,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        depthChildrenKey: this.props.depthChildrenKey,
 	        wrapping: wrapping,
 	        totalRow: totalRow,
-	        rowKey: key
-	      });
+	        rowKey: key,
+	        rowMetadata: this.props.rowMetadata
+	      };
+	      if (rowMetadata && rowMetadata.templateRow) {
+	        if (rowMetadata.templateRow.prototype instanceof _react2.default.Component) {
+	          var templateRow = rowMetadata.templateRow;
+
+	          console.log(rowMetadata);
+	          component = _react2.default.createElement('templateRow', props);
+	        } else if (typeof rowMetadata.templateRow === 'function') {
+	          component = rowMetadata.templateRow(props);
+	        }
+	      } else {
+	        component = _react2.default.createElement(_PivotGriddleRow2.default, props);
+	      }
+	      console.log(component);
+	      return component;
 	    }
 	  }, {
 	    key: 'createRows',
@@ -12449,9 +12475,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	          rows = _props.rows,
 	          renderColumns = _props.renderColumns,
 	          groupBy = _props.groupBy,
-	          depthChildrenKey = _props.depthChildrenKey;
+	          depthChildrenKey = _props.depthChildrenKey,
+	          rowMetadata = _props.rowMetadata;
 
 	      if (rows.length <= 0) return false;
+	      var getRowKey = rowMetadata && rowMetadata.key ? rowMetadata.key : false;
 	      var renderer = [];
 	      var calcCol = renderColumns.filter(function (col) {
 	        return !!col.calculation;
@@ -12468,7 +12496,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      };
 	      rows.forEach(function (row, idx) {
 	        var grouping = groupBy && row.children;
-	        var baseKey = 'row-' + idx;
+	        var baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : 'row-' + idx;
 	        var key = baseKey;
 	        if (grouping) {
 	          var groupRows = [];
@@ -12533,8 +12561,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this4 = this;
 
 	      var rows = this.createRows();
-	      var renderColumns = this.props.renderColumns;
+	      var _props2 = this.props,
+	          renderColumns = _props2.renderColumns,
+	          rowMetadata = _props2.rowMetadata;
 
+	      var headerClassName = rowMetadata && rowMetadata.headerCssClassName ? rowMetadata.headerCssClassName : '';
 	      return _react2.default.createElement(
 	        'table',
 	        {
@@ -12550,6 +12581,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          sortDir: this.props.sortDir,
 	          groupBySort: this.props.groupBySort,
 	          groupBy: this.props.groupBy,
+	          headerClassName: headerClassName,
 	          ref: function ref(el) {
 	            _this4._tableHead = el;
 	          }
@@ -12587,7 +12619,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  sortDir: _propTypes2.default.string.isRequired,
 	  groupBySort: _propTypes2.default.string.isRequired,
 	  onSortChange: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.bool]).isRequired,
-	  renderColumns: _propTypes2.default.array.isRequired
+	  renderColumns: _propTypes2.default.array.isRequired,
+	  rowMetadata: _propTypes2.default.oneOfType([_propTypes2.default.bool, _propTypes2.default.object]).isRequired
 	};
 
 	exports.default = PivotGriddleTable;
@@ -13851,9 +13884,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function renderRow(row, idx) {
 	      var _this4 = this;
 
+	      var headerClassName = this.props.headerClassName;
+
+	      var className = void 0;
+	      if (typeof headerClassName === 'function') {
+	        className = headerClassName(row);
+	      } else {
+	        className = headerClassName;
+	      }
 	      var rrow = _react2.default.createElement(
 	        'tr',
-	        { key: idx },
+	        { key: idx, className: className },
 	        row.map(function (col) {
 	          return _this4.renderCols(col);
 	        })
@@ -13895,7 +13936,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  sortDir: oneOfProps.isRequired,
 	  groupBy: oneOfProps.isRequired,
 	  groupBySort: oneOfProps.isRequired,
-	  onSortChange: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.bool]).isRequired
+	  onSortChange: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.bool]).isRequired,
+	  headerClassName: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.string]).isRequired
 	};
 
 		exports.default = PivotGriddleHeader;
@@ -14122,12 +14164,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var child = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 	      var childKey = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '';
-	      var rowKey = this.props.rowKey;
+	      var _props = this.props,
+	          rowKey = _props.rowKey,
+	          rowMetadata = _props.rowMetadata;
 
 	      var classes = '';
 	      var key = '' + rowKey + childKey;
 	      if (child) classes = 'childrow';
 	      if (totalRow) classes = classes + ' totalRow';
+	      var customClassName = void 0;
+	      if (rowMetadata && rowMetadata.bodyCssClassName) {
+	        if (typeof rowMetadata.bodyCssClassName === 'function') {
+	          customClassName = rowMetadata.bodyCssClassName(row);
+	        } else {
+	          customClassName = rowMetadata.bodyCssClassName;
+	        }
+	      }
+	      if (customClassName) classes = classes !== '' ? classes + ' ' + customClassName : customClassName;
 	      return _react2.default.createElement(
 	        'tr',
 	        {
@@ -14166,9 +14219,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function renderDepthRow(row, columns) {
 	      var _this4 = this;
 
-	      var _props = this.props,
-	          depthChildrenKey = _props.depthChildrenKey,
-	          rowKey = _props.rowKey;
+	      var _props2 = this.props,
+	          depthChildrenKey = _props2.depthChildrenKey,
+	          rowKey = _props2.rowKey,
+	          rowMetadata = _props2.rowMetadata;
 
 	      var rows = [];
 	      if (this.state.showChild) {
@@ -14176,13 +14230,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	          rows.push(_this4.renderRow(child, columns, false, false, true, '-' + idx));
 	        });
 	      }
+	      var classes = 'firstRow';
+	      var customClassName = void 0;
+	      if (rowMetadata && rowMetadata.bodyCssClassName) {
+	        if (typeof rowMetadata.bodyCssClassName === 'function') {
+	          customClassName = rowMetadata.bodyCssClassName(row);
+	        } else {
+	          customClassName = rowMetadata.bodyCssClassName;
+	        }
+	      }
+	      if (customClassName) classes = classes !== '' ? classes + ' ' + customClassName : customClassName;
 	      var rrow = _react2.default.createElement(
 	        'tbody',
 	        { key: 'tbody-' + rowKey },
 	        _react2.default.createElement(
 	          'tr',
 	          {
-	            className: 'firstRow',
+	            className: classes,
 	            key: rowKey
 	          },
 	          columns.map(function (col) {
@@ -14235,9 +14299,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'renderTotalCell',
 	    value: function renderTotalCell(row, cell) {
-	      var _props2 = this.props,
-	          groupBy = _props2.groupBy,
-	          rowKey = _props2.rowKey;
+	      var _props3 = this.props,
+	          groupBy = _props3.groupBy,
+	          rowKey = _props3.rowKey;
 
 	      if (row === null || !row[cell.column]) return _react2.default.createElement('td', null);
 	      var data = row[cell.column];
@@ -14280,15 +14344,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _props3 = this.props,
-	          row = _props3.row,
-	          depthChildrenKey = _props3.depthChildrenKey,
-	          columns = _props3.columns,
-	          rowSpan = _props3.rowSpan,
-	          groupBy = _props3.groupBy,
-	          wrapping = _props3.wrapping,
-	          totalRow = _props3.totalRow,
-	          rowKey = _props3.rowKey;
+	      var _props4 = this.props,
+	          row = _props4.row,
+	          depthChildrenKey = _props4.depthChildrenKey,
+	          columns = _props4.columns,
+	          rowSpan = _props4.rowSpan,
+	          groupBy = _props4.groupBy,
+	          wrapping = _props4.wrapping,
+	          totalRow = _props4.totalRow,
+	          rowKey = _props4.rowKey;
 
 	      if (row[depthChildrenKey] && row[depthChildrenKey].length >= 1 && !groupBy) {
 	        return this.renderDepthRow(row, columns);
@@ -14318,7 +14382,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  columns: _propTypes2.default.array.isRequired,
 	  rowSpan: _propTypes2.default.oneOfType([_propTypes2.default.bool, _propTypes2.default.number]).isRequired,
 	  wrapping: _propTypes2.default.bool.isRequired,
-	  totalRow: _propTypes2.default.bool.isRequired
+	  totalRow: _propTypes2.default.bool.isRequired,
+	  rowMetadata: _propTypes2.default.oneOfType([_propTypes2.default.bool, _propTypes2.default.object]).isRequired
 	};
 
 	exports.default = PivotGriddleRow;

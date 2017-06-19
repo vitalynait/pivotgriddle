@@ -40,11 +40,20 @@ class PivotGriddleRow extends Component {
     });
   }
   renderRow(row, columns, rowSpan, totalRow = false, child = false, childKey = '') {
-    const { rowKey } = this.props;
+    const { rowKey, rowMetadata } = this.props;
     let classes = '';
     const key = `${rowKey}${childKey}`;
     if (child) classes = 'childrow';
     if (totalRow) classes = `${classes} totalRow`;
+    let customClassName;
+    if (rowMetadata && rowMetadata.bodyCssClassName) {
+      if (typeof rowMetadata.bodyCssClassName === 'function') {
+        customClassName = rowMetadata.bodyCssClassName(row);
+      } else {
+        customClassName = rowMetadata.bodyCssClassName;
+      }
+    }
+    if (customClassName) classes = classes !== '' ? `${classes} ${customClassName}` : customClassName;
     return (
       <tr
         className={classes}
@@ -68,17 +77,27 @@ class PivotGriddleRow extends Component {
     return <td onClick={() => this.onChildShow()}>{this.state.showChild ? '-' : '+'}</td>; //eslint-disable-line
   }
   renderDepthRow(row, columns) {
-    const { depthChildrenKey, rowKey } = this.props;
+    const { depthChildrenKey, rowKey, rowMetadata } = this.props;
     const rows = [];
     if (this.state.showChild) {
       row[depthChildrenKey].forEach((child, idx) => {
         rows.push(this.renderRow(child, columns, false, false, true, `-${idx}`));
       });
     }
+    let classes = 'firstRow';
+    let customClassName;
+    if (rowMetadata && rowMetadata.bodyCssClassName) {
+      if (typeof rowMetadata.bodyCssClassName === 'function') {
+        customClassName = rowMetadata.bodyCssClassName(row);
+      } else {
+        customClassName = rowMetadata.bodyCssClassName;
+      }
+    }
+    if (customClassName) classes = classes !== '' ? `${classes} ${customClassName}` : customClassName;
     const rrow = (
       <tbody key={`tbody-${rowKey}`}>
         <tr
-          className="firstRow"
+          className={classes}
           key={rowKey}
         >
           {
@@ -198,6 +217,10 @@ PivotGriddleRow.propTypes = {
   ]).isRequired,
   wrapping: PropTypes.bool.isRequired,
   totalRow: PropTypes.bool.isRequired,
+  rowMetadata: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.object,
+  ]).isRequired,
 };
 
 export default PivotGriddleRow;

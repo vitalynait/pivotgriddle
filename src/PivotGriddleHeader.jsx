@@ -106,8 +106,15 @@ class PivotGriddleHeader extends Component {
     return ccol;
   }
   renderRow(row, idx) {
+    const { headerClassName } = this.props;
+    let className;
+    if (typeof headerClassName === 'function') {
+      className = headerClassName(row);
+    } else {
+      className = headerClassName;
+    }
     const rrow = (
-      <tr key={idx}>
+      <tr key={idx} className={className}>
         {
           row.map(col => this.renderCols(col))
         }
@@ -148,6 +155,10 @@ PivotGriddleHeader.propTypes = {
   onSortChange: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.bool,
+  ]).isRequired,
+  headerClassName: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.string,
   ]).isRequired,
 };
 

@@ -116,23 +116,38 @@ class PivotGriddleTable extends Component {
   }
 
   renderRow(row, columns, key, rowSpan = false, wrapping = false, totalRow = false) {
-    return (
-      <PivotGriddleRow
-        row={row}
-        columns={columns}
-        rowSpan={rowSpan}
-        groupBy={this.props.groupBy}
-        depthChildrenKey={this.props.depthChildrenKey}
-        wrapping={wrapping}
-        totalRow={totalRow}
-        rowKey={key}
-      />
-    );
+    const { rowMetadata } = this.props;
+    let component;
+    const props = {
+      row,
+      columns,
+      rowSpan,
+      groupBy: this.props.groupBy,
+      depthChildrenKey: this.props.depthChildrenKey,
+      wrapping,
+      totalRow,
+      rowKey: key,
+      rowMetadata: this.props.rowMetadata,
+    };
+    if (rowMetadata && rowMetadata.templateRow) {
+      if (rowMetadata.templateRow.prototype instanceof React.Component) {
+        const { templateRow } = rowMetadata;
+        console.log(rowMetadata);
+        component = <templateRow {...props} />;
+      } else if (typeof rowMetadata.templateRow === 'function') {
+        component = rowMetadata.templateRow(props);
+      }
+    } else {
+      component = <PivotGriddleRow {...props} />;
+    }
+    console.log(component);
+    return component;
   }
 
   createRows() {
-    const { rows, renderColumns, groupBy, depthChildrenKey } = this.props;
+    const { rows, renderColumns, groupBy, depthChildrenKey, rowMetadata } = this.props;
     if (rows.length <= 0) return false;
+    const getRowKey = rowMetadata && rowMetadata.key ? rowMetadata.key : false;
     const renderer = [];
     const calcCol = renderColumns.filter(col => !!col.calculation);
     const calc = (prev, curr) => {
@@ -149,7 +164,7 @@ class PivotGriddleTable extends Component {
     };
     rows.forEach((row, idx) => {
       const grouping = groupBy && row.children;
-      const baseKey = `row-${idx}`;
+      const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${idx}`;
       let key = baseKey;
       if (grouping) {
         const groupRows = [];
@@ -199,7 +214,8 @@ class PivotGriddleTable extends Component {
 
   render() {
     const rows = this.createRows();
-    const { renderColumns } = this.props;
+    const { renderColumns, rowMetadata } = this.props;
+    const headerClassName = rowMetadata && rowMetadata.headerCssClassName ? rowMetadata.headerCssClassName : '';
     return (
       <table
         ref={(el) => { this._table = el; }}
@@ -212,6 +228,7 @@ class PivotGriddleTable extends Component {
           sortDir={this.props.sortDir}
           groupBySort={this.props.groupBySort}
           groupBy={this.props.groupBy}
+          headerClassName={headerClassName}
           ref={(el) => { this._tableHead = el; }}
         />
         {
@@ -259,6 +276,10 @@ PivotGriddleTable.propTypes = {
     PropTypes.bool,
   ]).isRequired,
   renderColumns: PropTypes.array.isRequired,
+  rowMetadata: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.object,
+  ]).isRequired,
 };
 
 export default PivotGriddleTable;
