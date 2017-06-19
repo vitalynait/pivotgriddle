@@ -86,6 +86,8 @@ class PivotGriddle extends Component {
       activeClass: 'active',
       itemClass: 'item',
       wrapperClass: 'pagination',
+      wrapLi: true,
+      parentElement: 'ul',
     };
 
     const currentPage = props.page ? props.page : 1;
@@ -357,10 +359,19 @@ class PivotGriddle extends Component {
       const isCurrent = i === currentPage;
       const pageNum = i;
       let element;
+      const wrapLi = paginationSettings.wrapLi;
       if (isCurrent) {
-        element = <a key={`paginate-${i}`} className={`${paginationSettings.activeClass} ${paginationSettings.itemClass}`}>{pageNum}</a>;
+        if (wrapLi) {
+          element = <li key={`paginate-${i}`} className={`${paginationSettings.activeClass}`}>{pageNum}</li>;
+        } else {
+          element = <a key={`paginate-${i}`} className={`${paginationSettings.activeClass} ${paginationSettings.itemClass}`}>{pageNum}</a>;
+        }
       } else {
-        element = <a key={`paginate-${i}`} onClick={() => this.onPageChange(pageNum, pageSize)} className={`${paginationSettings.itemClass}`}>{pageNum}</a>;
+        if (wrapLi) {
+          element = <li key={`paginate-${i}`} className={`${paginationSettings.itemClass}`}><a onClick={() => this.onPageChange(pageNum, pageSize)}>{pageNum}</a></li>;
+        } else {
+          element = <a key={`paginate-${i}`} onClick={() => this.onPageChange(pageNum, pageSize)} className={`${paginationSettings.itemClass}`}>{pageNum}</a>;
+        }
       }
       renderer.push(element);
     }
@@ -375,7 +386,7 @@ class PivotGriddle extends Component {
 
   render() {
     const { groupBy, fixedTableHead, depthChildrenKey } = this.props;
-    const { sortBy, sortDir, groupBySort, currentPage, pageSize, rows, maxItems } = this.state;
+    const { sortBy, sortDir, groupBySort, currentPage, pageSize, rows, maxItems, paginationSettings } = this.state;
     const renderColumns = this.getRenderColumns();
     if (renderColumns.length <= 0) {
       return <div><table className={this.props.customTableClass}><tr><td>Нет данных</td></tr></table></div>;
@@ -387,6 +398,9 @@ class PivotGriddle extends Component {
     }
     const needScroll = !!this.props.infinityScroll && maxPages !== currentPage;
     const paginator = this.renderPaginator(currentPage, maxPages);
+
+    const Paginate = props => paginationSettings.parentElement === 'div' ? <div className={paginationSettings.wrapperClass}>{props.children}</div> : <ul className={paginationSettings.wrapperClass}>{props.children}</ul>;
+
     return (
       <div>
         <PivotGriddleTable
@@ -410,11 +424,11 @@ class PivotGriddle extends Component {
         }
         {
           !!paginator && !this.props.infinityScroll && paginator.length >= 1 &&
-          <div className={this.state.paginationSettings.wrapperClass}>
+          <Paginate>
             {
               paginator
             }
-          </div>
+          </Paginate>
         }
       </div>
     );

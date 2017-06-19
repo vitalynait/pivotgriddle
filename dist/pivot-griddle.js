@@ -133,7 +133,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var paginationSettings = {
 	      activeClass: 'active',
 	      itemClass: 'item',
-	      wrapperClass: 'pagination'
+	      wrapperClass: 'pagination',
+	      wrapLi: true,
+	      parentElement: 'ul'
 	    };
 
 	    var currentPage = props.page ? props.page : 1;
@@ -488,20 +490,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var isCurrent = i === currentPage;
 	        var pageNum = i;
 	        var element = void 0;
+	        var wrapLi = paginationSettings.wrapLi;
 	        if (isCurrent) {
-	          element = _react2.default.createElement(
-	            'a',
-	            { key: 'paginate-' + i, className: paginationSettings.activeClass + ' ' + paginationSettings.itemClass },
-	            pageNum
-	          );
+	          if (wrapLi) {
+	            element = _react2.default.createElement(
+	              'li',
+	              { key: 'paginate-' + i, className: '' + paginationSettings.activeClass },
+	              pageNum
+	            );
+	          } else {
+	            element = _react2.default.createElement(
+	              'a',
+	              { key: 'paginate-' + i, className: paginationSettings.activeClass + ' ' + paginationSettings.itemClass },
+	              pageNum
+	            );
+	          }
 	        } else {
-	          element = _react2.default.createElement(
-	            'a',
-	            { key: 'paginate-' + i, onClick: function onClick() {
-	                return _this5.onPageChange(pageNum, pageSize);
-	              }, className: '' + paginationSettings.itemClass },
-	            pageNum
-	          );
+	          if (wrapLi) {
+	            element = _react2.default.createElement(
+	              'li',
+	              { key: 'paginate-' + i, className: '' + paginationSettings.itemClass },
+	              _react2.default.createElement(
+	                'a',
+	                { onClick: function onClick() {
+	                    return _this5.onPageChange(pageNum, pageSize);
+	                  } },
+	                pageNum
+	              )
+	            );
+	          } else {
+	            element = _react2.default.createElement(
+	              'a',
+	              { key: 'paginate-' + i, onClick: function onClick() {
+	                  return _this5.onPageChange(pageNum, pageSize);
+	                }, className: '' + paginationSettings.itemClass },
+	              pageNum
+	            );
+	          }
 	        }
 	        renderer.push(element);
 	      };
@@ -537,7 +562,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          currentPage = _state6.currentPage,
 	          pageSize = _state6.pageSize,
 	          rows = _state6.rows,
-	          maxItems = _state6.maxItems;
+	          maxItems = _state6.maxItems,
+	          paginationSettings = _state6.paginationSettings;
 
 	      var renderColumns = this.getRenderColumns();
 	      if (renderColumns.length <= 0) {
@@ -566,6 +592,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	      var needScroll = !!this.props.infinityScroll && maxPages !== currentPage;
 	      var paginator = this.renderPaginator(currentPage, maxPages);
+
+	      var Paginate = function Paginate(props) {
+	        return paginationSettings.parentElement === 'div' ? _react2.default.createElement(
+	          'div',
+	          { className: paginationSettings.wrapperClass },
+	          props.children
+	        ) : _react2.default.createElement(
+	          'ul',
+	          { className: paginationSettings.wrapperClass },
+	          props.children
+	        );
+	      };
+
 	      return _react2.default.createElement(
 	        'div',
 	        null,
@@ -588,8 +627,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }),
 	        needScroll && _react2.default.createElement(_reactInview2.default, { onInview: this.onScroll }),
 	        !!paginator && !this.props.infinityScroll && paginator.length >= 1 && _react2.default.createElement(
-	          'div',
-	          { className: this.state.paginationSettings.wrapperClass },
+	          Paginate,
+	          null,
 	          paginator
 	        )
 	      );

@@ -7,6 +7,8 @@ const paginationSettings = {
   activeClass: 'active',
   itemClass: 'item',
   wrapperClass: 'ui pagination menu compact',
+  wrapLi: false,
+  parentElement: 'div',
 };
 
 class Basic extends Component {
