@@ -130,8 +130,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var _this = _possibleConstructorReturn(this, (PivotGriddle.__proto__ || Object.getPrototypeOf(PivotGriddle)).call(this, props));
 
+	    var paginationSettings = {
+	      activeClass: 'active',
+	      itemClass: 'item',
+	      wrapperClass: 'pagination'
+	    };
+
 	    var currentPage = props.page ? props.page : 1;
 	    var pageSize = props.pageSize ? props.pageSize : 20;
+	    var pag = Object.assign(paginationSettings, props.paginationSettings);
 
 	    _this.state = {
 	      groupBySort: 'asc',
@@ -141,7 +148,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      pageSize: pageSize,
 	      rows: props.rows,
 	      maxItems: props.maxItems,
-	      loading: false
+	      loading: false,
+	      paginationSettings: pag
 	    };
 
 	    _this.getRenderColumns = _this.getRenderColumns.bind(_this);
@@ -472,7 +480,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var i = void 0;
 	      var renderer = [];
 	      if (maxPages <= 1) return;
-	      var pageSize = this.state.pageSize;
+	      var _state4 = this.state,
+	          pageSize = _state4.pageSize,
+	          paginationSettings = _state4.paginationSettings;
 
 	      var _loop = function _loop() {
 	        var isCurrent = i === currentPage;
@@ -481,7 +491,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (isCurrent) {
 	          element = _react2.default.createElement(
 	            'a',
-	            { key: 'paginate-' + i, className: 'active item' },
+	            { key: 'paginate-' + i, className: paginationSettings.activeClass + ' ' + paginationSettings.itemClass },
 	            pageNum
 	          );
 	        } else {
@@ -489,7 +499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            'a',
 	            { key: 'paginate-' + i, onClick: function onClick() {
 	                return _this5.onPageChange(pageNum, pageSize);
-	              }, className: 'item' },
+	              }, className: '' + paginationSettings.itemClass },
 	            pageNum
 	          );
 	        }
@@ -505,9 +515,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'onScroll',
 	    value: function onScroll() {
-	      var _state4 = this.state,
-	          currentPage = _state4.currentPage,
-	          pageSize = _state4.pageSize;
+	      var _state5 = this.state,
+	          currentPage = _state5.currentPage,
+	          pageSize = _state5.pageSize;
 
 	      this.onPageChange(currentPage + 1, pageSize);
 	    }
@@ -520,14 +530,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	          groupBy = _props6.groupBy,
 	          fixedTableHead = _props6.fixedTableHead,
 	          depthChildrenKey = _props6.depthChildrenKey;
-	      var _state5 = this.state,
-	          sortBy = _state5.sortBy,
-	          sortDir = _state5.sortDir,
-	          groupBySort = _state5.groupBySort,
-	          currentPage = _state5.currentPage,
-	          pageSize = _state5.pageSize,
-	          rows = _state5.rows,
-	          maxItems = _state5.maxItems;
+	      var _state6 = this.state,
+	          sortBy = _state6.sortBy,
+	          sortDir = _state6.sortDir,
+	          groupBySort = _state6.groupBySort,
+	          currentPage = _state6.currentPage,
+	          pageSize = _state6.pageSize,
+	          rows = _state6.rows,
+	          maxItems = _state6.maxItems;
 
 	      var renderColumns = this.getRenderColumns();
 	      if (renderColumns.length <= 0) {
@@ -579,7 +589,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        needScroll && _react2.default.createElement(_reactInview2.default, { onInview: this.onScroll }),
 	        !!paginator && !this.props.infinityScroll && paginator.length >= 1 && _react2.default.createElement(
 	          'div',
-	          { className: 'ui pagination menu compact' },
+	          { className: this.state.paginationSettings.wrapperClass },
 	          paginator
 	        )
 	      );
@@ -609,6 +619,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  rowMetadata: _propTypes2.default.oneOfType([_propTypes2.default.bool, _propTypes2.default.object]),
 	  sortBy: _propTypes2.default.string,
 	  sortDir: _propTypes2.default.string
+
 	}, _class.defaultProps = {
 	  columns: [],
 	  hiddenColumns: [],
@@ -630,7 +641,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  findRowColumns: true,
 	  rowMetadata: false,
 	  sortDir: 'asc',
-	  sortBy: false
+	  sortBy: false,
+	  paginationSettings: {}
 	}, _temp);
 	exports.default = PivotGriddle;
 
@@ -13821,6 +13833,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          }
 	          currentColSpan = colSpan;
 	        } else {
+	          sortable = node.sortable || true;
 	          rowSpan = reassignDepth;
 	        }
 	        var item = {

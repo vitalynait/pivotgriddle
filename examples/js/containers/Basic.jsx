@@ -3,6 +3,12 @@ import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/basic';
 
+const paginationSettings = {
+  activeClass: 'active',
+  itemClass: 'item',
+  wrapperClass: 'ui pagination menu compact',
+};
+
 class Basic extends Component {
   render() {
     return (
@@ -11,6 +17,7 @@ class Basic extends Component {
         rows={data.rows}
         pagination
         customTableClass="ui table celled"
+        paginationSettings={paginationSettings}
       />
     );
   }

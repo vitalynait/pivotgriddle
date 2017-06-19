@@ -45,6 +45,7 @@ class PivotGriddleHeader extends Component {
         }
         currentColSpan = colSpan;
       } else {
+        sortable = node.sortable || true;
         rowSpan = reassignDepth;
       }
       const item = {

@@ -52,6 +52,7 @@ class PivotGriddle extends Component {
     ]),
     sortBy: PropTypes.string,
     sortDir: PropTypes.string,
+
   }
 
   static defaultProps = {
@@ -76,12 +77,20 @@ class PivotGriddle extends Component {
     rowMetadata: false,
     sortDir: 'asc',
     sortBy: false,
+    paginationSettings: {},
   }
   constructor(props) {
     super(props);
 
+    const paginationSettings = {
+      activeClass: 'active',
+      itemClass: 'item',
+      wrapperClass: 'pagination',
+    };
+
     const currentPage = props.page ? props.page : 1;
     const pageSize = props.pageSize ? props.pageSize : 20;
+    const pag = Object.assign(paginationSettings, props.paginationSettings);
 
     this.state = {
       groupBySort: 'asc',
@@ -92,6 +101,7 @@ class PivotGriddle extends Component {
       rows: props.rows,
       maxItems: props.maxItems,
       loading: false,
+      paginationSettings: pag,
     };
 
     this.getRenderColumns = this.getRenderColumns.bind(this);
@@ -342,15 +352,15 @@ class PivotGriddle extends Component {
     let i;
     const renderer = [];
     if (maxPages <= 1) return;
-    const { pageSize } = this.state;
+    const { pageSize, paginationSettings } = this.state;
     for (i = 1; i <= maxPages; i += 1) {
       const isCurrent = i === currentPage;
       const pageNum = i;
       let element;
       if (isCurrent) {
-        element = <a key={`paginate-${i}`} className="active item">{pageNum}</a>;
+        element = <a key={`paginate-${i}`} className={`${paginationSettings.activeClass} ${paginationSettings.itemClass}`}>{pageNum}</a>;
       } else {
-        element = <a key={`paginate-${i}`} onClick={() => this.onPageChange(pageNum, pageSize)} className="item">{pageNum}</a>;
+        element = <a key={`paginate-${i}`} onClick={() => this.onPageChange(pageNum, pageSize)} className={`${paginationSettings.itemClass}`}>{pageNum}</a>;
       }
       renderer.push(element);
     }
@@ -400,7 +410,7 @@ class PivotGriddle extends Component {
         }
         {
           !!paginator && !this.props.infinityScroll && paginator.length >= 1 &&
-          <div className="ui pagination menu compact">
+          <div className={this.state.paginationSettings.wrapperClass}>
             {
               paginator
             }
