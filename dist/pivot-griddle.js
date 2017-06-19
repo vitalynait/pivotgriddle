@@ -14213,7 +14213,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (cell.template) {
 	        var props = {
 	          data: value,
-	          rowData: row
+	          rowData: row,
+	          metadata: cell
 	        };
 	        if (cell.template.prototype instanceof _react2.default.Component) {
 	          var Template = cell.template;

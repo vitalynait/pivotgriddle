@@ -109,6 +109,7 @@ class PivotGriddleRow extends Component {
       const props = {
         data: value,
         rowData: row,
+        metadata: cell,
       };
       if (cell.template.prototype instanceof React.Component) {
         const Template = cell.template;
