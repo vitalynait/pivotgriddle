@@ -137,6 +137,7 @@ class PivotGriddle extends Component {
     const getColumns = (row, iArr = []) => {
       Object.keys(row).forEach((col) => {
         if (hiddenColumns.indexOf(col) >= 0) return true;
+        if (col.indexOf('$$') >= 0) return true;
         if (col === groupChildrenKey) {
           getColumns(row[col][0]);
         } else if (col === depthChildrenKey || (!depthChildrenKey && Array.isArray(row[col]))) {
