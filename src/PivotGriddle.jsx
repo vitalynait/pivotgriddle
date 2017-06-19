@@ -50,6 +50,8 @@ class PivotGriddle extends Component {
       PropTypes.bool,
       PropTypes.object,
     ]),
+    sortBy: PropTypes.string,
+    sortDir: PropTypes.string,
   }
 
   static defaultProps = {
@@ -72,6 +74,8 @@ class PivotGriddle extends Component {
     maxItems: false,
     findRowColumns: true,
     rowMetadata: false,
+    sortDir: 'asc',
+    sortBy: false,
   }
   constructor(props) {
     super(props);
@@ -81,8 +85,8 @@ class PivotGriddle extends Component {
 
     this.state = {
       groupBySort: 'asc',
-      sortDir: 'asc',
-      sortBy: false,
+      sortDir: props.sortDir,
+      sortBy: props.sortBy,
       currentPage,
       pageSize,
       rows: props.rows,

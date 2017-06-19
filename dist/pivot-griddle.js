@@ -135,8 +135,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    _this.state = {
 	      groupBySort: 'asc',
-	      sortDir: 'asc',
-	      sortBy: false,
+	      sortDir: props.sortDir,
+	      sortBy: props.sortBy,
 	      currentPage: currentPage,
 	      pageSize: pageSize,
 	      rows: props.rows,
@@ -598,7 +598,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  infinityScroll: _propTypes2.default.bool,
 	  maxItems: _propTypes2.default.oneOfType([_propTypes2.default.bool, _propTypes2.default.number]),
 	  findRowColumns: _propTypes2.default.bool,
-	  rowMetadata: _propTypes2.default.oneOfType([_propTypes2.default.bool, _propTypes2.default.object])
+	  rowMetadata: _propTypes2.default.oneOfType([_propTypes2.default.bool, _propTypes2.default.object]),
+	  sortBy: _propTypes2.default.string,
+	  sortDir: _propTypes2.default.string
 	}, _class.defaultProps = {
 	  columns: [],
 	  hiddenColumns: [],
@@ -618,7 +620,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  infinityScroll: false,
 	  maxItems: false,
 	  findRowColumns: true,
-	  rowMetadata: false
+	  rowMetadata: false,
+	  sortDir: 'asc',
+	  sortBy: false
 	}, _temp);
 	exports.default = PivotGriddle;
 
