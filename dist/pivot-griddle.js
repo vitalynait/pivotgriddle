@@ -197,6 +197,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'onSortChange',
 	    value: function onSortChange(key) {
+	      var _this2 = this;
+
 	      var _props = this.props,
 	          groupBy = _props.groupBy,
 	          customSortChange = _props.customSortChange;
@@ -207,18 +209,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var state = {};
 	      if (customSortChange) {
-	        var data = customSortChange(key, currentPage, pageSize);
-	        if (key === groupBy) {
-	          state.groupBySort = data.sortDir;
-	          state.rows = data.rows;
-	        } else {
-	          state.sortBy = data.sortBy;
-	          state.sortDir = data.sortDir;
-	          state.rows = data.rows;
-	        }
-	        if (data.page) state.currentPage = data.page;
-	        if (data.maxItems) state.maxItems = data.maxItems;
-	        if (data.pageSize) state.pageSize = data.pageSize;
+	        customSortChange(key, currentPage, pageSize).then(function (payload) {
+	          if (key === groupBy) {
+	            state.groupBySort = payload.sortDir;
+	            state.rows = payload.rows;
+	          } else {
+	            state.sortBy = payload.sortBy;
+	            state.sortDir = payload.sortDir;
+	            state.rows = payload.rows;
+	          }
+	          if (payload.page) state.currentPage = payload.page;
+	          if (payload.maxItems) state.maxItems = payload.maxItems;
+	          if (payload.pageSize) state.pageSize = payload.pageSize;
+	          _this2.setState(_extends({}, state));
+	        });
 	      } else {
 	        if (key === groupBy) {
 	          state.groupBySort = this.state.groupBySort === 'desc' ? 'asc' : 'desc';
@@ -228,8 +232,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          state.sortBy = key;
 	          state.sortDir = 'asc';
 	        }
+	        this.setState(_extends({}, state));
 	      }
-	      this.setState(_extends({}, state));
 	    }
 	  }, {
 	    key: 'getRenderColumns',
@@ -394,7 +398,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'sortingRows',
 	    value: function sortingRows(rows) {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      var childs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 	      var _props4 = this.props,
@@ -420,7 +424,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          sortableRows = sortableRows.map(function (row) {
 	            var newRow = _extends({}, row);
 	            if (row[depthChildrenKey] && row[depthChildrenKey].length > 1) {
-	              newRow[depthChildrenKey] = _this2.sortingRows(row[depthChildrenKey]);
+	              newRow[depthChildrenKey] = _this3.sortingRows(row[depthChildrenKey]);
 	            }
 	            return newRow;
 	          });
@@ -431,6 +435,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'onPageChange',
 	    value: function onPageChange(nextPage, pageSize) {
+	      var _this4 = this;
+
 	      var _props5 = this.props,
 	          customPageChange = _props5.customPageChange,
 	          infinityScroll = _props5.infinityScroll;
@@ -438,28 +444,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var obj = {};
 	      obj.loading = true;
 	      if (customPageChange && typeof customPageChange === 'function') {
-	        var data = customPageChange(nextPage, pageSize);
-	        if (infinityScroll) {
-	          var rows = this.state.rows;
+	        customPageChange(nextPage, pageSize).then(function (payload) {
+	          if (infinityScroll) {
+	            var rows = _this4.state.rows;
 
-	          var newRows = rows.concat(data.rows);
-	          obj.rows = newRows;
-	        } else {
-	          obj.rows = data.rows;
-	        }
-	        obj.currentPage = data.page || nextPage;
-	        obj.pageSize = data.pageSize;
-	        if (data.sortBy) obj.sortBy = data.sortBy;
-	        if (data.sortDir) obj.sortDir = data.sortDir;
+	            var newRows = rows.concat(payload.rows);
+	            obj.rows = newRows;
+	          } else {
+	            obj.rows = payload.rows;
+	          }
+	          obj.currentPage = payload.page || nextPage;
+	          obj.pageSize = payload.pageSize;
+	          if (payload.sortBy) obj.sortBy = payload.sortBy;
+	          if (payload.sortDir) obj.sortDir = payload.sortDir;
+	          _this4.setState(_extends({}, obj));
+	        });
 	      } else {
 	        obj.currentPage = nextPage;
+	        this.setState(_extends({}, obj));
 	      }
-	      this.setState(_extends({}, obj));
 	    }
 	  }, {
 	    key: 'renderPaginator',
 	    value: function renderPaginator(currentPage, maxPages) {
-	      var _this3 = this;
+	      var _this5 = this;
 
 	      var i = void 0;
 	      var renderer = [];
@@ -480,7 +488,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          element = _react2.default.createElement(
 	            'a',
 	            { key: 'paginate-' + i, onClick: function onClick() {
-	                return _this3.onPageChange(pageNum, pageSize);
+	                return _this5.onPageChange(pageNum, pageSize);
 	              }, className: 'item' },
 	            pageNum
 	          );
@@ -506,7 +514,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this4 = this;
+	      var _this6 = this;
 
 	      var _props6 = this.props,
 	          groupBy = _props6.groupBy,
@@ -558,7 +566,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          groupBySort: groupBySort,
 	          groupBy: groupBy,
 	          onSortChange: function onSortChange(key) {
-	            return _this4.onSortChange(key);
+	            return _this6.onSortChange(key);
 	          },
 	          customTableClass: this.props.customTableClass,
 	          rows: data,

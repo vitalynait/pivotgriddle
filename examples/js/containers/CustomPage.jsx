@@ -25,6 +25,16 @@ class CustomPage extends Component {
       rows,
     };
   }
+  async getDataPageAsync(nextPage = 1, pageSize = this.state.pageSize) {
+    const start = (nextPage * pageSize) - pageSize;
+    const end = pageSize * nextPage;
+    const rows = data.slice(start, end);
+    return {
+      page: nextPage,
+      pageSize,
+      rows,
+    };
+  }
   render() {
     const initialRows = this.getDataPage(1);
     return (
@@ -33,7 +43,7 @@ class CustomPage extends Component {
         rows={initialRows.rows}
         hiddenColumns={hiddenColumns}
         customTableClass="ui table celled"
-        customPageChange={this.getDataPage}
+        customPageChange={this.getDataPageAsync}
         maxItems={data.length}
       />
     );

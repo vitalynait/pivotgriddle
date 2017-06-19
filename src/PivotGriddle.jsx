@@ -112,18 +112,22 @@ class PivotGriddle extends Component {
     const { sortBy, currentPage, pageSize } = this.state;
     const state = {};
     if (customSortChange) {
-      const data = customSortChange(key, currentPage, pageSize);
-      if (key === groupBy) {
-        state.groupBySort = data.sortDir;
-        state.rows = data.rows;
-      } else {
-        state.sortBy = data.sortBy;
-        state.sortDir = data.sortDir;
-        state.rows = data.rows;
-      }
-      if (data.page) state.currentPage = data.page;
-      if (data.maxItems) state.maxItems = data.maxItems;
-      if (data.pageSize) state.pageSize = data.pageSize;
+      customSortChange(key, currentPage, pageSize).then((payload) => {
+        if (key === groupBy) {
+          state.groupBySort = payload.sortDir;
+          state.rows = payload.rows;
+        } else {
+          state.sortBy = payload.sortBy;
+          state.sortDir = payload.sortDir;
+          state.rows = payload.rows;
+        }
+        if (payload.page) state.currentPage = payload.page;
+        if (payload.maxItems) state.maxItems = payload.maxItems;
+        if (payload.pageSize) state.pageSize = payload.pageSize;
+        this.setState({
+          ...state,
+        });
+      });
     } else {
       if (key === groupBy) {
         state.groupBySort = this.state.groupBySort === 'desc' ? 'asc' : 'desc';
@@ -133,10 +137,10 @@ class PivotGriddle extends Component {
         state.sortBy = key;
         state.sortDir = 'asc';
       }
+      this.setState({
+        ...state,
+      });
     }
-    this.setState({
-      ...state,
-    });
   }
 
   getRenderColumns() {
@@ -310,24 +314,28 @@ class PivotGriddle extends Component {
     const obj = {};
     obj.loading = true;
     if (customPageChange && typeof customPageChange === 'function') {
-      const data = customPageChange(nextPage, pageSize);
-      if (infinityScroll) {
-        const { rows } = this.state;
-        const newRows = rows.concat(data.rows);
-        obj.rows = newRows;
-      } else {
-        obj.rows = data.rows;
-      }
-      obj.currentPage = data.page || nextPage;
-      obj.pageSize = data.pageSize;
-      if (data.sortBy) obj.sortBy = data.sortBy;
-      if (data.sortDir) obj.sortDir = data.sortDir;
+      customPageChange(nextPage, pageSize).then((payload) => {
+        if (infinityScroll) {
+          const { rows } = this.state;
+          const newRows = rows.concat(payload.rows);
+          obj.rows = newRows;
+        } else {
+          obj.rows = payload.rows;
+        }
+        obj.currentPage = payload.page || nextPage;
+        obj.pageSize = payload.pageSize;
+        if (payload.sortBy) obj.sortBy = payload.sortBy;
+        if (payload.sortDir) obj.sortDir = payload.sortDir;
+        this.setState({
+          ...obj,
+        });
+      });
     } else {
       obj.currentPage = nextPage;
+      this.setState({
+        ...obj,
+      });
     }
-    this.setState({
-      ...obj,
-    });
   }
 
   renderPaginator(currentPage, maxPages) {

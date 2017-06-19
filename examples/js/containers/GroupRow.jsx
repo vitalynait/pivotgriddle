@@ -17,7 +17,7 @@ const columns = [
   {
     column: 'email',
     displayName: 'Эл. почта',
-    template: value => <a href={`mailto:${value}`}>{value}</a>,
+    template: props => <a href={`mailto:${props.data}`}>{props.data}</a>,
   },
   {
     column: 'gender',

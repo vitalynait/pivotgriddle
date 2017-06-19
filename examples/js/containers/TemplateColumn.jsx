@@ -5,7 +5,7 @@ import data from '../data/basic';
 
 class TemplateEmail extends Component {
   render() {
-    return <a href={`mailto:${this.props.value}`}>{this.props.value}</a>;
+    return <a href={`mailto:${this.props.data}`}>{this.props.data}</a>;
   }
 };
 
