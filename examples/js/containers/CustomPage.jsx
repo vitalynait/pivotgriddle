@@ -14,6 +14,7 @@ class CustomPage extends Component {
     };
 
     this.getDataPage = this.getDataPage.bind(this);
+    this.getDataPageAsync = this.getDataPageAsync.bind(this);
   }
   getDataPage(nextPage = 1, pageSize = this.state.pageSize) {
     const start = (nextPage * pageSize) - pageSize;
@@ -29,11 +30,12 @@ class CustomPage extends Component {
     const start = (nextPage * pageSize) - pageSize;
     const end = pageSize * nextPage;
     const rows = data.slice(start, end);
-    return {
+    const props = {
       page: nextPage,
       pageSize,
       rows,
     };
+    return props;
   }
   render() {
     const initialRows = this.getDataPage(1);
