@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/sostav';
+import paginationSettings from '../data/pagination.config';
 
 const columns = [
   {
@@ -59,6 +60,7 @@ class FixedHead extends Component {
           findRowColumns={false}
           fixedTableHead={this.state.fixedTableHead}
           fixedHeadOffset={0}
+          paginationSettings={paginationSettings}
         />
       </div>
     );

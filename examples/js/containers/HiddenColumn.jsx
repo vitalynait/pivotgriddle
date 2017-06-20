@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/basic';
+import paginationSettings from '../data/pagination.config';
 
 const columns = [
   {
@@ -32,6 +33,7 @@ class HiddenColumn extends Component {
           pagination
           hiddenColumns={hiddenColumns}
           customTableClass="ui table celled"
+          paginationSettings={paginationSettings}
         />
       </div>
     );

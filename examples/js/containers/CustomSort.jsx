@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/sostav';
+import paginationSettings from '../data/pagination.config';
 
 const hiddenColumns = ['age', 'eyeColor', 'isActive', 'index'];
 
@@ -57,11 +58,14 @@ class CustomPage extends Component {
       this.sortable.sortDir = 'asc';
     }
     const rows = sortDirArr(data, this.sortable.sortDir, this.sortable.sortBy);
-    return {
+    const props = {
       sortDir: this.sortable.sortDir,
       sortBy: this.sortable.sortBy,
       rows,
     };
+    return new Promise((resolve) => {
+      resolve(props);
+    });
   }
   render() {
     return (
@@ -77,6 +81,7 @@ class CustomPage extends Component {
           customTableClass="ui table celled"
           customSortChange={this.onSortChange}
           pagination
+          paginationSettings={paginationSettings}
         />
       </div>
     );

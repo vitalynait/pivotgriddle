@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/basic';
+import paginationSettings from '../data/pagination.config';
 
 class TemplateEmail extends Component {
   render() {
@@ -75,6 +76,7 @@ class TemplateColumn extends Component {
           rows={data.rows}
           pagination
           customTableClass="ui table celled"
+          paginationSettings={paginationSettings}
         />
       </div>
     );

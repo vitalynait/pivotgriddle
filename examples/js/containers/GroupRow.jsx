@@ -4,6 +4,7 @@ import 'react-select/scss/default.scss';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/basic';
+import paginationSettings from '../data/pagination.config';
 
 const columns = [
   {
@@ -73,6 +74,7 @@ class GroupRow extends Component {
           pagination
           groupBy={this.state.groupBy}
           customTableClass="ui table celled structured"
+          paginationSettings={paginationSettings}
         />
       </div>
     );

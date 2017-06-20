@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/sostav';
+import paginationSettings from '../data/pagination.config';
 
 const hiddenColumns = ['age', 'eyeColor', 'isActive', 'index'];
 
@@ -49,6 +50,7 @@ class CustomSortPage extends Component {
 
     this.onSortChange = this.onSortChange.bind(this);
     this.getDataPage = this.getDataPage.bind(this);
+    this.getDataPageAsync = this.getDataPageAsync.bind(this);
     this.sortable = {};
   }
   onSortChange(key, page) {
@@ -60,7 +62,7 @@ class CustomSortPage extends Component {
     }
     const dataPage = this.getDataPage(page, this.state.pageSize, this.sortable);
     const rows = dataPage.rows;
-    return {
+    const props = {
       sortDir: this.sortable.sortDir,
       sortBy: this.sortable.sortBy,
       rows,
@@ -68,6 +70,7 @@ class CustomSortPage extends Component {
       pageSize: 10,
       maxItems: data.length,
     };
+    return new Promise(resolve => resolve(props));
   }
   getDataPage(nextPage = 1, pageSize = this.state.pageSize, sortable = this.sortable) {
     const start = (nextPage * pageSize) - pageSize;
@@ -79,6 +82,18 @@ class CustomSortPage extends Component {
       pageSize,
       rows: sortableRows,
     };
+  }
+  getDataPageAsync(nextPage = 1, pageSize = this.state.pageSize, sortable = this.sortable) {
+    const start = (nextPage * pageSize) - pageSize;
+    const end = pageSize * nextPage;
+    const rows = sortable.sortBy ? sortDirArr(data, sortable.sortDir, sortable.sortBy) : data;
+    const sortableRows = rows.slice(start, end);
+    const props = {
+      page: nextPage,
+      pageSize,
+      rows: sortableRows,
+    };
+    return new Promise(resolve => resolve(props));
   }
   render() {
     const initial = this.getDataPage();
@@ -97,10 +112,11 @@ class CustomSortPage extends Component {
           hiddenColumns={hiddenColumns}
           customTableClass="ui table celled"
           customSortChange={this.onSortChange}
-          customPageChange={this.getDataPage}
+          customPageChange={this.getDataPageAsync}
           maxItems={data.length}
           pageSize={initial.pageSize}
           page={initial.page}
+          paginationSettings={paginationSettings}
         />
       </div>
     );

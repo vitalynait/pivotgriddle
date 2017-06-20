@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/sostav';
+import paginationSettings from '../data/pagination.config';
 
 const hiddenColumns = ['age', 'eyeColor', 'isActive', 'index'];
 
@@ -26,7 +27,7 @@ class CustomPage extends Component {
       rows,
     };
   }
-  async getDataPageAsync(nextPage = 1, pageSize = this.state.pageSize) {
+  getDataPageAsync(nextPage = 1, pageSize = this.state.pageSize) {
     const start = (nextPage * pageSize) - pageSize;
     const end = pageSize * nextPage;
     const rows = data.slice(start, end);
@@ -35,7 +36,9 @@ class CustomPage extends Component {
       pageSize,
       rows,
     };
-    return props;
+    return new Promise((resolve) => {
+      resolve(props);
+    });
   }
   render() {
     const initialRows = this.getDataPage(1);
@@ -47,6 +50,7 @@ class CustomPage extends Component {
         customTableClass="ui table celled"
         customPageChange={this.getDataPageAsync}
         maxItems={data.length}
+        paginationSettings={paginationSettings}
       />
     );
   }

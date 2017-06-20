@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/sostav';
+import paginationSettings from '../data/pagination.config';
 
 const columns = [
   {
@@ -37,6 +38,7 @@ class OnlyMetaColumns extends Component {
         customTableClass="ui table celled"
         pagination
         findRowColumns={false}
+        paginationSettings={paginationSettings}
       />
     );
   }

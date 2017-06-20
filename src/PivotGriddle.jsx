@@ -337,7 +337,8 @@ class PivotGriddle extends Component {
     const obj = {};
     obj.loading = true;
     if (customPageChange && typeof customPageChange === 'function') {
-      customPageChange(nextPage, pageSize).then((payload) => {
+      const getCustomPage = customPageChange(nextPage, pageSize);
+      getCustomPage.then((payload) => {
         if (infinityScroll) {
           const { rows } = this.state;
           const newRows = rows.concat(payload.rows);

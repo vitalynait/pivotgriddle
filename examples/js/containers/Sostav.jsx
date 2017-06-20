@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/sostav';
+import paginationSettings from '../data/pagination.config';
 
 const hiddenColumns = ['age', 'eyeColor', 'isActive', 'index'];
 const columns = [
@@ -29,6 +30,7 @@ class Sostav extends Component {
         pagination
         hiddenColumns={hiddenColumns}
         customTableClass="ui table celled"
+          paginationSettings={paginationSettings}
       />
     );
   }

@@ -16,7 +16,7 @@ gulp.task('clean', () => del(['./dist/*', './lib/**']));
 //-------------
 // PRODUCTION
 //-------------
-gulp.task('prod', ['umdBuild'], () => {
+gulp.task('prod', ['clean'], () => {
   gulp.src([
     './src/**/*.js',
     './src/*js',
@@ -26,11 +26,6 @@ gulp.task('prod', ['umdBuild'], () => {
     .pipe(babel())
     .pipe(gulp.dest('./lib'));
 });
-
-gulp.task('umdBuild', ['clean'], shell.task([
-  'webpack --config webpack/webpack.umd.config.js',
-  'webpack --config webpack/webpack.umd.min.config.js',
-]));
 
 //-------------
 // EXAMPLES
