@@ -4,7 +4,7 @@ import PivotGriddle from 'pivot-griddle';
 import data from '../data/basic';
 
 const paginationSettings = {
-  activeClass: 'active',
+  activeClass: 'active item',
   itemClass: 'item',
   wrapperClass: 'ui pagination menu compact',
   wrapLi: false,
