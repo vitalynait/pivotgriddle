@@ -13,6 +13,7 @@ paginationSettings.prevText = '<';
 paginationSettings.nextText = '>';
 paginationSettings.firstText = '<<';
 paginationSettings.lastText = '>>';
+paginationSettings.wrapLi = true;
 
 class Basic extends Component {
   render() {

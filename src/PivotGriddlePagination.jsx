@@ -39,15 +39,11 @@ export default class PivotGriddlePagination extends Component {
     const { wrapLi } = this.props.paginationSettings;
     let element;
     if (wrapLi) {
+      let renValue = value;
+      if (!current) renValue = <a href="javascript:void(0)" onClick={callback}>{value}</a>;
       element = (
         <li className={className} key={key}>
-          {
-            !current &&
-            <a href="javascript:void(0)" onClick={callback}>{value}</a>
-          }
-          {
-            current && value
-          }
+          {renValue}
         </li>
       );
     } else {
@@ -98,7 +94,7 @@ export default class PivotGriddlePagination extends Component {
 
     for (let i = startIndex; i <= endIndex; i++) {
       const isSelected = currentPage === i;
-      options.push(this.renderOption(i, i, isSelected ? paginationSettings.activeClass : paginationSettings.itemClass, (e) => { e.preventDefault(); this.setPage(i); }));
+      options.push(this.renderOption(i, i, isSelected ? paginationSettings.activeClass : paginationSettings.itemClass, (e) => { e.preventDefault(); this.setPage(i); }, isSelected));
     }
 
     if (currentPage < maxPage - 1 && paginationSettings.extends) {
