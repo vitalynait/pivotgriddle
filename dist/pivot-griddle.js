@@ -25618,18 +25618,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	      throw new TypeError('Value of "this.last" violates contract.\n\nExpected:\n(any) => any\n\nGot:\n' + _inspect(_this.last));
 	    }
 
+	    _this.renderOption = _this.renderOption.bind(_this);
+
+	    if (!(typeof _this.renderOption === 'function')) {
+	      throw new TypeError('Value of "this.renderOption" violates contract.\n\nExpected:\n(any, any, any, any, any) => any\n\nGot:\n' + _inspect(_this.renderOption));
+	    }
+
 	    return _this;
 	  }
 
 	  _createClass(PivotGriddlePagination, [{
 	    key: 'setPage',
 	    value: function setPage(i) {
-	      var _this2 = this;
-
-	      return function (e) {
-	        e.preventDefault();
-	        _this2.props.setPage(i);
-	      };
+	      this.props.setPage(i);
 	    }
 	  }, {
 	    key: 'first',
@@ -25656,161 +25657,99 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.props.setPage(this.props.maxPage);
 	    }
 	  }, {
+	    key: 'renderOption',
+	    value: function renderOption(key, value, className, callback) {
+	      var current = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+	      var wrapLi = this.props.paginationSettings.wrapLi;
+
+	      var element = void 0;
+	      if (wrapLi) {
+	        element = _react2.default.createElement(
+	          'li',
+	          { className: className, key: key },
+	          !current && _react2.default.createElement(
+	            'a',
+	            { href: 'javascript:void(0)', onClick: callback },
+	            value
+	          ),
+	          current && value
+	        );
+	      } else {
+	        var props = {
+	          href: 'javascript:void(0)',
+	          className: className
+	        };
+	        if (!current) props.onClick = callback;
+	        element = _react2.default.createElement(
+	          'a',
+	          props,
+	          value
+	        );
+	      }
+	      return element;
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this2 = this;
+
 	      var _props = this.props,
 	          currentPage = _props.currentPage,
 	          maxPage = _props.maxPage,
 	          paginationSettings = _props.paginationSettings;
+	      var viewPages = paginationSettings.viewPages;
 
+	      viewPages = parseInt(viewPages, 10);
 
-	      var viewPages = paginationSettings.viewPages || 10;
-	      if (viewPages < 3) viewPages = 3;
-	      var stepPages = viewPages % 2 === 0 ? viewPages / 2 : (viewPages - 1) / 2;
+	      if (maxPage <= 1) return null;
 
-	      if (maxPage === 1 || maxPage === 0) {
-	        return null;
+	      var left = currentPage - 1;
+	      var startIndex = left < Math.floor(viewPages / 2) ? 1 : currentPage - Math.floor(viewPages / 2);
+	      var endIndex = startIndex + viewPages - 1;
+	      if (!paginationSettings.extends) {
+	        startIndex = 1;
+	        endIndex = maxPage;
 	      }
-
-	      var startIndex = Math.max(currentPage - stepPages, 1);
-	      var endIndex = paginationSettings.extends ? Math.min(startIndex + viewPages - 1, maxPage) : maxPage;
-
-	      if (maxPage >= viewPages && endIndex - startIndex <= viewPages - 1) {
-	        startIndex = endIndex - viewPages + 1;
+	      if (endIndex > maxPage) {
+	        startIndex -= endIndex - maxPage;
+	        endIndex = maxPage;
+	        if (startIndex < 1) startIndex = 1;
 	      }
 
 	      var options = [];
-	      var firstText = paginationSettings.firstText || 'Первая';
-	      var prevText = paginationSettings.prevText || 'Пред';
-	      var nextText = paginationSettings.nextText || 'След';
-	      var lastText = paginationSettings.lastText || 'Последняя';
-	      var wrapLi = paginationSettings.wrapLi;
-	      var element = void 0;
-	      if (currentPage && maxPage >= 3 && currentPage !== 1 && currentPage !== 2 && paginationSettings.extends) {
+	      if (currentPage && currentPage !== 1 && paginationSettings.extends) {
 	        var firstClass = paginationSettings.firstClass || paginationSettings.itemClass || 'item';
-	        if (wrapLi) {
-	          element = _react2.default.createElement(
-	            'li',
-	            { className: firstClass, key: 'first' },
-	            _react2.default.createElement(
-	              'a',
-	              { href: 'javascript:void(0)', onClick: this.first },
-	              firstText
-	            )
-	          );
-	        } else {
-	          element = _react2.default.createElement(
-	            'a',
-	            { href: 'javascript:void(0)', className: firstClass, onClick: this.first },
-	            firstText
-	          );
-	        }
-	        options.push(element);
+	        var firstText = paginationSettings.firstText || 'Первая';
+	        options.push(this.renderOption('first', firstText, firstClass, this.first));
 	      }
 
-	      if (currentPage > 1 && paginationSettings.extends) {
+	      if (currentPage > 2 && paginationSettings.extends) {
 	        var prevClass = paginationSettings.prevClass || paginationSettings.itemClass || 'item';
-	        if (wrapLi) {
-	          element = _react2.default.createElement(
-	            'li',
-	            { className: prevClass, key: 'prev' },
-	            _react2.default.createElement(
-	              'a',
-	              { href: 'javascript:void(0)', onClick: this.previous },
-	              prevText
-	            )
-	          );
-	        } else {
-	          element = _react2.default.createElement(
-	            'a',
-	            { href: 'javascript:void(0)', className: prevClass, onClick: this.previous },
-	            prevText
-	          );
-	        }
-	        options.push(element);
+	        var prevText = paginationSettings.prevText || 'Пред';
+	        options.push(this.renderOption('prev', prevText, prevClass, this.previous));
 	      }
+
+	      var _loop = function _loop(i) {
+	        var isSelected = currentPage === i;
+	        options.push(_this2.renderOption(i, i, isSelected ? paginationSettings.activeClass : paginationSettings.itemClass, function (e) {
+	          e.preventDefault();_this2.setPage(i);
+	        }));
+	      };
 
 	      for (var i = startIndex; i <= endIndex; i++) {
-	        var isSelected = currentPage === i;
-
-	        if (wrapLi) {
-	          if (isSelected) {
-	            element = _react2.default.createElement(
-	              'li',
-	              { className: '' + paginationSettings.activeClass, key: i },
-	              i
-	            );
-	          } else {
-	            element = _react2.default.createElement(
-	              'li',
-	              { key: i, className: '' + paginationSettings.itemClass },
-	              _react2.default.createElement(
-	                'a',
-	                { href: 'javascript:void(0)', onClick: this.setPage(i) },
-	                i
-	              )
-	            );
-	          }
-	        } else {
-	          if (isSelected) {
-	            element = _react2.default.createElement(
-	              'a',
-	              { className: '' + paginationSettings.activeClass, key: i },
-	              i
-	            );
-	          } else {
-	            element = _react2.default.createElement(
-	              'a',
-	              { className: '' + paginationSettings.itemClass, href: 'javascript:void(0)', onClick: this.setPage(i) },
-	              i
-	            );
-	          }
-	        }
-	        options.push(element);
+	        _loop(i);
 	      }
 
-	      if (currentPage < maxPage && paginationSettings.extends) {
+	      if (currentPage < maxPage - 1 && paginationSettings.extends) {
+	        var nextText = paginationSettings.nextText || 'След';
 	        var nextClass = paginationSettings.nextClass || paginationSettings.itemClass || 'item';
-	        if (wrapLi) {
-	          element = _react2.default.createElement(
-	            'li',
-	            { className: nextClass, key: 'next' },
-	            _react2.default.createElement(
-	              'a',
-	              { href: 'javascript:void(0)', onClick: this.next },
-	              nextText
-	            )
-	          );
-	        } else {
-	          element = _react2.default.createElement(
-	            'a',
-	            { href: 'javascript:void(0)', className: nextClass, onClick: this.next },
-	            nextText
-	          );
-	        }
-	        options.push(element);
+	        options.push(this.renderOption('next', nextText, nextClass, this.next));
 	      }
 
-	      if (maxPage >= 3 && currentPage !== maxPage && currentPage !== maxPage - 1 && paginationSettings.extends) {
+	      if (maxPage >= 3 && currentPage !== maxPage && paginationSettings.extends) {
+	        var lastText = paginationSettings.lastText || 'Последняя';
 	        var lastClass = paginationSettings.lastClass || paginationSettings.itemClass || 'item';
-	        if (wrapLi) {
-	          element = _react2.default.createElement(
-	            'li',
-	            { className: lastClass, key: 'last' },
-	            _react2.default.createElement(
-	              'a',
-	              { href: 'javascript:void(0)', onClick: this.last },
-	              lastText
-	            )
-	          );
-	        } else {
-	          element = _react2.default.createElement(
-	            'a',
-	            { href: 'javascript:void(0)', className: lastClass, onClick: this.last },
-	            lastText
-	          );
-	        }
-	        options.push(element);
+	        options.push(this.renderOption('last', lastText, lastClass, this.last));
 	      }
 
 	      var PaginateWrap = function PaginateWrap(props) {
@@ -25829,6 +25768,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        );
 	      };
 
+	      if (options.length <= 0) return null;
 	      return _react2.default.createElement(
 	        PaginateWrap,
 	        null,

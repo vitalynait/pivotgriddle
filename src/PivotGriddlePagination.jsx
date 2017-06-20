@@ -8,13 +8,11 @@ export default class PivotGriddlePagination extends Component {
     this.previous = this.previous.bind(this);
     this.next = this.next.bind(this);
     this.last = this.last.bind(this);
+    this.renderOption = this.renderOption.bind(this);
   }
 
   setPage(i) {
-    return (e) => {
-      e.preventDefault();
-      this.props.setPage(i);
-    };
+    this.props.setPage(i);
   }
 
   first(e) {
@@ -37,88 +35,82 @@ export default class PivotGriddlePagination extends Component {
     this.props.setPage(this.props.maxPage);
   }
 
+  renderOption(key, value, className, callback, current = false) {
+    const { wrapLi } = this.props.paginationSettings;
+    let element;
+    if (wrapLi) {
+      element = (
+        <li className={className} key={key}>
+          {
+            !current &&
+            <a href="javascript:void(0)" onClick={callback}>{value}</a>
+          }
+          {
+            current && value
+          }
+        </li>
+      );
+    } else {
+      const props = {
+        href: 'javascript:void(0)',
+        className,
+      };
+      if (!current) props.onClick = callback;
+      element = (
+        <a {...props}>{value}</a>
+      );
+    }
+    return element;
+  }
+
   render() {
     const { currentPage, maxPage, paginationSettings } = this.props;
+    let { viewPages } = paginationSettings;
+    viewPages = parseInt(viewPages, 10);
 
-    let viewPages = paginationSettings.viewPages || 10;
-    if (viewPages < 3) viewPages = 3;
-    const stepPages = viewPages % 2 === 0 ? viewPages / 2 : (viewPages - 1) / 2;
+    if (maxPage <= 1) return null;
 
-    if (maxPage === 1 || maxPage === 0) {
-      return null;
+    const left = currentPage - 1;
+    let startIndex = left < Math.floor(viewPages / 2) ? 1 : currentPage - Math.floor(viewPages / 2);
+    let endIndex = (startIndex + viewPages) - 1;
+    if (!paginationSettings.extends) {
+      startIndex = 1;
+      endIndex = maxPage;
     }
-
-    let startIndex = Math.max(currentPage - stepPages, 1);
-    const endIndex = paginationSettings.extends ? Math.min((startIndex + viewPages) - 1, maxPage) : maxPage;
-
-    if (maxPage >= viewPages && (endIndex - startIndex) <= viewPages - 1) {
-      startIndex = (endIndex - viewPages) + 1;
+    if (endIndex > maxPage) {
+      startIndex -= (endIndex - maxPage);
+      endIndex = maxPage;
+      if (startIndex < 1) startIndex = 1;
     }
 
     const options = [];
-    const firstText = paginationSettings.firstText || 'Первая';
-    const prevText = paginationSettings.prevText || 'Пред';
-    const nextText = paginationSettings.nextText || 'След';
-    const lastText = paginationSettings.lastText || 'Последняя';
-    const wrapLi = paginationSettings.wrapLi;
-    let element;
-    if (currentPage && maxPage >= 3 && currentPage !== 1 && currentPage !== 2 && paginationSettings.extends) {
+    if (currentPage && currentPage !== 1 && paginationSettings.extends) {
       const firstClass = paginationSettings.firstClass || paginationSettings.itemClass || 'item';
-      if (wrapLi) {
-        element = <li className={firstClass} key="first"><a href="javascript:void(0)" onClick={this.first}>{firstText}</a></li>;
-      } else {
-        element = <a href="javascript:void(0)" className={firstClass} onClick={this.first}>{firstText}</a>;
-      }
-      options.push(element);
+      const firstText = paginationSettings.firstText || 'Первая';
+      options.push(this.renderOption('first', firstText, firstClass, this.first));
     }
 
-    if (currentPage > 1 && paginationSettings.extends) {
+    if (currentPage > 2 && paginationSettings.extends) {
       const prevClass = paginationSettings.prevClass || paginationSettings.itemClass || 'item';
-      if (wrapLi) {
-        element = <li className={prevClass} key="prev"><a href="javascript:void(0)" onClick={this.previous}>{prevText}</a></li>;
-      } else {
-        element = <a href="javascript:void(0)" className={prevClass} onClick={this.previous}>{prevText}</a>;
-      }
-      options.push(element);
+      const prevText = paginationSettings.prevText || 'Пред';
+      options.push(this.renderOption('prev', prevText, prevClass, this.previous));
     }
 
     for (let i = startIndex; i <= endIndex; i++) {
       const isSelected = currentPage === i;
-
-      if (wrapLi) {
-        if (isSelected) {
-          element = <li className={`${paginationSettings.activeClass}`} key={i}>{i}</li>;
-        } else {
-          element = <li key={i} className={`${paginationSettings.itemClass}`}><a href="javascript:void(0)" onClick={this.setPage(i)}>{i}</a></li>;
-        }
-      } else {
-        if (isSelected) {
-          element = <a className={`${paginationSettings.activeClass}`} key={i}>{i}</a>;
-        } else {
-          element = <a className={`${paginationSettings.itemClass}`} href="javascript:void(0)" onClick={this.setPage(i)}>{i}</a>;
-        }
-      }
-      options.push(element);
+      options.push(this.renderOption(i, i, isSelected ? paginationSettings.activeClass : paginationSettings.itemClass, (e) => { e.preventDefault(); this.setPage(i); }));
     }
 
-    if (currentPage < maxPage && paginationSettings.extends) {
+    if (currentPage < maxPage - 1 && paginationSettings.extends) {
+      const nextText = paginationSettings.nextText || 'След';
       const nextClass = paginationSettings.nextClass || paginationSettings.itemClass || 'item';
-      if (wrapLi) {
-        element = <li className={nextClass} key="next"><a href="javascript:void(0)" onClick={this.next}>{nextText}</a></li>;
-      } else {
-        element = <a href="javascript:void(0)" className={nextClass} onClick={this.next}>{nextText}</a>;
-      }
-      options.push(element);
+      options.push(this.renderOption('next', nextText, nextClass, this.next));
     }
 
-    if (maxPage >= 3 && currentPage !== maxPage && currentPage !== maxPage - 1 && paginationSettings.extends) {
+    if (maxPage >= 3 && currentPage !== maxPage && paginationSettings.extends) {
+      const lastText = paginationSettings.lastText || 'Последняя';
       const lastClass = paginationSettings.lastClass || paginationSettings.itemClass || 'item';
-      if (wrapLi) {
-        element = <li className={lastClass} key="last"><a href="javascript:void(0)" onClick={this.last}>{lastText}</a></li>;
-      } else {
-        element = <a href="javascript:void(0)" className={lastClass} onClick={this.last}>{lastText}</a>;
-      }
-      options.push(element);
+      options.push(this.renderOption('last', lastText, lastClass, this.last));
     }
 
     const PaginateWrap = props => paginationSettings.parentElement === 'div'
@@ -127,6 +119,7 @@ export default class PivotGriddlePagination extends Component {
       ? <ol className={paginationSettings.wrapperClass}>{props.children}</ol>
       : <ul className={paginationSettings.wrapperClass}>{props.children}</ul>;
 
+    if (options.length <= 0) return null;
     return (
       <PaginateWrap>
         {options}

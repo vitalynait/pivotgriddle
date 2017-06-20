@@ -18,6 +18,7 @@ class Basic extends Component {
         columns={[]}
         rows={data.rows}
         pagination
+        pageSize={10}
         customTableClass="ui table celled"
         paginationSettings={paginationSettings}
       />
