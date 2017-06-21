@@ -129,6 +129,7 @@ class PivotGriddleRow extends Component {
         data: value,
         rowData: row,
         metadata: cell,
+        parentRow,
       };
       if (typeof cell.template === 'function') {
         const Template = cell.template;
