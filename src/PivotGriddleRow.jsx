@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import PivotGriddleCell from './PivotGriddleCell';
 
+const hashCode = (s) => s.split('').reduce((a, b) => { a = ((a << 5) - a) + b.charCodeAt(0); return a & a}, 0); // eslint-disable-line
+
 const getValue = (col, row, parentRow = null) => {
   if (col === null) return null;
   let value;
@@ -76,12 +78,13 @@ class PivotGriddleRow extends Component {
   renderShowChild() {
     return <td onClick={() => this.onChildShow()}>{this.state.showChild ? '-' : '+'}</td>; //eslint-disable-line
   }
+
   renderDepthRow(row, columns) {
     const { depthChildrenKey, rowKey, rowMetadata } = this.props;
     const rows = [];
     if (this.state.showChild) {
       row[depthChildrenKey].forEach((child, idx) => {
-        rows.push(this.renderRow(child, columns, false, false, true, `-${idx}`));
+        rows.push(this.renderRow(child, columns, false, false, true, hashCode(`-${columns[0].column}-${idx}`)));
       });
     }
     let classes = 'firstRow';
@@ -121,6 +124,7 @@ class PivotGriddleRow extends Component {
     );
     return rrow;
   }
+
   renderCell(row, cell, rowSpan, parentRow = false) {
     const { rowKey } = this.props;
     let value = getValue(cell, row, parentRow);

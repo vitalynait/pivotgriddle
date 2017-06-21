@@ -30,7 +30,8 @@ class Sostav extends Component {
         pagination
         hiddenColumns={hiddenColumns}
         customTableClass="ui table celled"
-          paginationSettings={paginationSettings}
+        paginationSettings={paginationSettings}
+        findRowColumns
       />
     );
   }

@@ -82,6 +82,7 @@ class CustomPage extends Component {
           customSortChange={this.onSortChange}
           pagination
           paginationSettings={paginationSettings}
+          findRowColumns
         />
       </div>
     );

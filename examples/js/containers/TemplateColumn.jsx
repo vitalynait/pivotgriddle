@@ -75,6 +75,7 @@ class TemplateColumn extends Component {
           pagination
           customTableClass="ui table celled"
           paginationSettings={paginationSettings}
+          findRowColumns
         />
       </div>
     );

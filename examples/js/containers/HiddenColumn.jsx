@@ -34,6 +34,7 @@ class HiddenColumn extends Component {
           hiddenColumns={hiddenColumns}
           customTableClass="ui table celled"
           paginationSettings={paginationSettings}
+          findRowColumns
         />
       </div>
     );

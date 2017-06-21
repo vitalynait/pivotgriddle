@@ -75,6 +75,7 @@ class GroupRow extends Component {
           groupBy={this.state.groupBy}
           customTableClass="ui table celled structured"
           paginationSettings={paginationSettings}
+          findRowColumns
         />
       </div>
     );

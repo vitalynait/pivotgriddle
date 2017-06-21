@@ -11,3 +11,4 @@ export Hierarchical from './Hierarchical';
 export OnlyMetaColumns from './OnlyMetaColumns';
 export FixedHead from './FixedHead';
 export InfinityScroll from './InfinityScroll';
+export Timeout from './Timeout';

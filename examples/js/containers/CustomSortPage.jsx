@@ -117,6 +117,7 @@ class CustomSortPage extends Component {
           pageSize={initial.pageSize}
           page={initial.page}
           paginationSettings={paginationSettings}
+          findRowColumns
         />
       </div>
     );

@@ -6,6 +6,24 @@ import PivotGriddleTable from './PivotGriddleTable';
 import PivotGriddlePagination from './PivotGriddlePagination';
 import gost from './utils';
 
+const defaultPaginationSettings = {
+  activeClass: 'active',
+  itemClass: 'item',
+  wrapperClass: 'pagination',
+  wrapLi: true,
+  parentElement: 'ul',
+  firstText: false,
+  nextText: false,
+  lastText: false,
+  prevText: false,
+  firstClass: 'first',
+  lastClass: 'last',
+  nextClass: 'next',
+  prevClass: 'prev',
+  extends: false,
+  viewPages: 5,
+};
+
 class PivotGriddle extends Component {
   static propTypes = {
     page: PropTypes.oneOfType([
@@ -51,7 +69,10 @@ class PivotGriddle extends Component {
       PropTypes.bool,
       PropTypes.object,
     ]),
-    sortBy: PropTypes.string,
+    sortBy: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.string,
+    ]),
     sortDir: PropTypes.string,
 
   }
@@ -74,36 +95,19 @@ class PivotGriddle extends Component {
     customSortChange: false,
     infinityScroll: false,
     maxItems: false,
-    findRowColumns: true,
+    findRowColumns: false,
     rowMetadata: false,
     sortDir: 'asc',
     sortBy: false,
     paginationSettings: {},
   }
+
   constructor(props) {
     super(props);
 
-    const paginationSettings = {
-      activeClass: 'active',
-      itemClass: 'item',
-      wrapperClass: 'pagination',
-      wrapLi: true,
-      parentElement: 'ul',
-      firstText: false,
-      nextText: false,
-      lastText: false,
-      prevText: false,
-      firstClass: 'first',
-      lastClass: 'last',
-      nextClass: 'next',
-      prevClass: 'prev',
-      extends: false,
-      viewPages: 5,
-    };
-
     const currentPage = props.page ? props.page : 1;
     const pageSize = props.pageSize ? props.pageSize : 20;
-    const pag = Object.assign(paginationSettings, props.paginationSettings);
+    const pag = Object.assign(defaultPaginationSettings, props.paginationSettings);
 
     this.state = {
       groupBySort: 'asc',
@@ -127,6 +131,20 @@ class PivotGriddle extends Component {
 
   componentDidMount() {
     this.getGroupRows();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const state = {};
+    if (nextProps.rows !== this.state.rows) state.rows = nextProps.rows;
+    if (nextProps.sortDir !== this.state.sortDir) state.sortDir = nextProps.sortDir;
+    if (nextProps.sortBy !== this.state.sortBy) state.sortBy = nextProps.sortBy;
+    if (nextProps.maxItems !== this.state.maxItems) state.maxItems = nextProps.maxItems;
+    if (nextProps.page !== this.state.currentPage) state.currentPage = nextProps.page ? nextProps.page : 1;
+    if (nextProps.pageSize !== this.state.pageSize) state.pageSize = nextProps.pageSize ? nextProps.pageSize : 20;
+    state.paginationSettings = Object.assign(defaultPaginationSettings, nextProps.paginationSettings);
+    this.setState({
+      ...state,
+    });
   }
 
   onSortChange(key) {

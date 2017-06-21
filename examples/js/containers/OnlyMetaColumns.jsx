@@ -37,7 +37,6 @@ class OnlyMetaColumns extends Component {
         rows={data}
         customTableClass="ui table celled"
         pagination
-        findRowColumns={false}
         paginationSettings={paginationSettings}
       />
     );

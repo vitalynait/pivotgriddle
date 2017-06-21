@@ -17,6 +17,10 @@ class PivotGriddleTable extends Component {
     this.renderRow = this.renderRow.bind(this);
     this.createRows = this.createRows.bind(this);
 
+    this.state = {
+      rows: props.rows,
+    };
+
     this._tableWrapper = null;
     this.newTable = null;
     this.ro = new ResizeObserver(() => {
@@ -41,6 +45,11 @@ class PivotGriddleTable extends Component {
     }
     this.checkListener(newProps);
     this.callObserver(newProps);
+    if (newProps.rows !== this.props.rows) {
+      this.setState({
+        rows: newProps.rows,
+      });
+    }
   }
 
   checkListener(props = this.props) {
@@ -115,6 +124,33 @@ class PivotGriddleTable extends Component {
     }
   }
 
+  getKey(i) {
+    const len = 26;
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    let name = '';
+    const countMax = (current, j) => {
+      let k;
+      if (current <= j) return 0;
+      if (current > j && current - j < j) {
+        k = 1;
+        return k;
+      } else {
+        const next = current - j;
+        k = 1 + countMax(next, j);
+        return k;
+      }
+    };
+    if (i > len) {
+      const col = countMax(i, len) + 1;
+      for (let num = 0; num < col; num++) {
+        name += alphabet[i % len];
+      }
+    } else {
+      name = alphabet[i];
+    }
+    return name;
+  }
+
   renderRow(row, columns, key, rowSpan = false, wrapping = false, totalRow = false) {
     const { rowMetadata } = this.props;
     let component;
@@ -143,7 +179,8 @@ class PivotGriddleTable extends Component {
   }
 
   createRows() {
-    const { rows, renderColumns, groupBy, depthChildrenKey, rowMetadata } = this.props;
+    const { renderColumns, groupBy, depthChildrenKey, rowMetadata } = this.props;
+    const { rows } = this.state;
     if (rows.length <= 0) return false;
     const getRowKey = rowMetadata && rowMetadata.key ? rowMetadata.key : false;
     const renderer = [];
@@ -160,9 +197,9 @@ class PivotGriddleTable extends Component {
       next.max = next.max > curr ? next.max : curr;
       return next;
     };
-    rows.forEach((row, idx) => {
+    rows.forEach((row) => {
       const grouping = groupBy && row.children;
-      const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${idx}`;
+      const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${row[renderColumns[0].column]}`;
       let key = baseKey;
       if (grouping) {
         const groupRows = [];
@@ -187,14 +224,14 @@ class PivotGriddleTable extends Component {
         }
         groupRows.push(this.renderRow(firstRow, renderColumns, key, rowSpan));
         childRows.forEach((childRow, cidx) => {
-          key = `${baseKey}-${cidx}`;
+          key = `${baseKey}-c-${this.getKey(cidx)}`;
           groupRows.push(this.renderRow(childRow, childColumns, key, false));
         });
         if (totals) {
-          key = `row-${idx}-total`;
+          key = `${baseKey}-total`;
           groupRows.push(this.renderRow(totals, renderColumns, key, false, false, true));
         }
-        renderer.push(<tbody key={`tbody-${idx}`}>{groupRows}</tbody>);
+        renderer.push(<tbody key={`${baseKey}-tbody`}>{groupRows}</tbody>);
       } else if (groupBy) {
         const groupingColumns = renderColumns.filter(item => item.column !== groupBy);
         groupingColumns.unshift(...renderColumns.filter(item => item.column === groupBy));
@@ -202,7 +239,7 @@ class PivotGriddleTable extends Component {
       } else {
         let rrows = this.renderRow(row, renderColumns, key, false);
         if (!depthChildrenKey) {
-          rrows = <tbody key={`tbody-${idx}`}>{rrows}</tbody>;
+          rrows = <tbody key={`${baseKey}-tbody`}>{rrows}</tbody>;
         }
         renderer.push(rrows);
       }
@@ -234,16 +271,18 @@ class PivotGriddleTable extends Component {
         }
         {
           !rows &&
-            <tr
-              className="no-data"
-            >
-              <td
-                colSpan={renderColumns.length}
-                align="center"
+            <tbody>
+              <tr
+                className="no-data"
               >
-                Нет данных
-              </td>
-            </tr>
+                <td
+                  colSpan={renderColumns.length}
+                  style={{ textAlign: 'center' }}
+                >
+                  Нет данных
+                </td>
+              </tr>
+            </tbody>
         }
       </table>
     );

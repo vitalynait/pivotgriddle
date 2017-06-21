@@ -38,6 +38,7 @@ class NonInitialColumn extends Component {
         pagination
         customTableClass="ui table"
         paginationSettings={paginationSettings}
+        findRowColumns
       />
     );
   }

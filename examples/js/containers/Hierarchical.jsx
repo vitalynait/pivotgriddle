@@ -14,6 +14,7 @@ class Hierarchical extends Component {
         depthChildrenKey="rows"
         customTableClass="ui table definition celled"
         paginationSettings={paginationSettings}
+        findRowColumns
       />
     );
   }

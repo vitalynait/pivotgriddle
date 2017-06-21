@@ -57,7 +57,6 @@ class FixedHead extends Component {
           rows={data}
           customTableClass="ui table celled"
           pagination
-          findRowColumns={false}
           fixedTableHead={this.state.fixedTableHead}
           fixedHeadOffset={0}
           paginationSettings={paginationSettings}

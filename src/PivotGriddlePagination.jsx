@@ -50,6 +50,7 @@ export default class PivotGriddlePagination extends Component {
       const props = {
         href: 'javascript:void(0)',
         className,
+        key,
       };
       if (!current) props.onClick = callback;
       element = (
@@ -57,6 +58,33 @@ export default class PivotGriddlePagination extends Component {
       );
     }
     return element;
+  }
+
+  getKey(i) {
+    const len = 26;
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    let name = '';
+    const countMax = (current, j) => {
+      let k;
+      if (current <= j) return 0;
+      if (current > j && current - j < j) {
+        k = 1;
+        return k;
+      } else {
+        const next = current - j;
+        k = 1 + countMax(next, j);
+        return k;
+      }
+    };
+    if (i > len) {
+      const col = countMax(i, len) + 1;
+      for (let num = 0; num < col; num++) {
+        name += alphabet[i % len];
+      }
+    } else {
+      name = alphabet[i];
+    }
+    return name;
   }
 
   render() {
@@ -94,7 +122,8 @@ export default class PivotGriddlePagination extends Component {
 
     for (let i = startIndex; i <= endIndex; i++) {
       const isSelected = currentPage === i;
-      options.push(this.renderOption(i, i, isSelected ? paginationSettings.activeClass : paginationSettings.itemClass, (e) => { e.preventDefault(); this.setPage(i); }, isSelected));
+      const key = `pag-${this.getKey(i)}`;
+      options.push(this.renderOption(key, i, isSelected ? paginationSettings.activeClass : paginationSettings.itemClass, (e) => { e.preventDefault(); this.setPage(i); }, isSelected));
     }
 
     if (currentPage < maxPage - 1 && paginationSettings.extends) {

@@ -51,6 +51,7 @@ class CustomPage extends Component {
         customPageChange={this.getDataPageAsync}
         maxItems={data.length}
         paginationSettings={paginationSettings}
+        findRowColumns
       />
     );
   }

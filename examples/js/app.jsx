@@ -23,6 +23,7 @@ class App extends React.Component {
               <Route exact path="/" component={Docs.About} />
               <Route exact path="/docs/" component={Docs.Main} />
               <Route exact path="/examples/" component={Examples.Basic} />
+              <Route exact path="/examples/timeout" component={Examples.Timeout} />
               <Route exact path="/examples/infinityscroll" component={Examples.InfinityScroll} />
               <Route exact path="/examples/templatecolumn" component={Examples.TemplateColumn} />
               <Route exact path="/examples/noninitialcolumn" component={Examples.NonInitialColumn} />

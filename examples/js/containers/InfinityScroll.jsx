@@ -12,6 +12,7 @@ class InfinityScroll extends Component {
         pagination
         customTableClass="ui table celled"
         infinityScroll
+        findRowColumns
       />
     );
   }

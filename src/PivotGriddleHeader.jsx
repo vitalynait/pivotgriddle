@@ -95,7 +95,7 @@ class PivotGriddleHeader extends Component {
         rowSpan={col.rowSpan > 1 ? col.rowSpan : null}
         colSpan={col.colSpan > 1 ? col.colSpan : null}
         className={classRules}
-        key={col.column}
+        key={`${col.column}-th`}
         width={col.width ? col.width : null}
         {
           ...elRules
@@ -106,6 +106,7 @@ class PivotGriddleHeader extends Component {
     );
     return ccol;
   }
+
   renderRow(row, idx) {
     const { headerClassName } = this.props;
     let className;
@@ -123,6 +124,7 @@ class PivotGriddleHeader extends Component {
     );
     return rrow;
   }
+
   render() {
     const { groupBy } = this.props;
     let columns;

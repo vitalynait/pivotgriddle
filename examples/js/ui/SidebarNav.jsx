@@ -19,6 +19,7 @@ class SidebarNav extends Component {
         <h3>Примеры</h3>
         <div className="ui secondary vertical menu">
           <Link exact className="item violet" to="/examples/">Базовая</Link>
+          <Link className="item violet" to="/examples/timeout">Данные с задержкой (5сек)</Link>
           <Link className="item violet" to="/examples/infinityscroll">Бесконечный скролл</Link>
           <Link className="item violet" to="/examples/templatecolumn">Шаблон ячейки</Link>
           <Link className="item violet" to="/examples/noninitialcolumn">Генерируемая ячейка</Link>
