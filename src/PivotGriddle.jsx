@@ -73,7 +73,7 @@ class PivotGriddle extends Component {
       PropTypes.string,
     ]),
     sortDir: PropTypes.string,
-
+    elementScroll: PropTypes.string,
   }
 
   static defaultProps = {
@@ -99,6 +99,7 @@ class PivotGriddle extends Component {
     sortDir: 'asc',
     sortBy: false,
     paginationSettings: {},
+    elementScroll: '',
   }
 
   constructor(props) {
@@ -132,7 +133,12 @@ class PivotGriddle extends Component {
   componentDidMount() {
     this.getGroupRows();
     if (this.props.infinityScroll) {
-      window.addEventListener('scroll', this.fetchInView);
+      if (this.props.elementScroll && this.props.elementScroll !== '') {
+        const element = document.querySelector(this.props.elementScroll);
+        element.addEventListener('scroll', this.fetchInView);
+      } else {
+        window.addEventListener('scroll', this.fetchInView);
+      }
     }
   }
 
@@ -151,7 +157,12 @@ class PivotGriddle extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.fetchInView);
+    if (this.props.elementScroll && this.props.elementScroll !== '') {
+      const element = document.querySelector(this.props.elementScroll);
+      element.removeEventListener('scroll', this.fetchInView);
+    } else {
+      window.removeEventListener('scroll', this.fetchInView);
+    }
   }
 
   fetchInView() {
@@ -159,8 +170,14 @@ class PivotGriddle extends Component {
     if (!this._inview || !this._inview.getBoundingClientRect()) return;
     const { top } = this._inview.getBoundingClientRect();
     const OFFSET = 50; // ensure the element is at least 50 pixels in view
-
-    if (top < window.innerHeight + OFFSET) {
+    let innerHeight;
+    if (this.props.elementScroll && this.props.elementScroll !== '') {
+      const element = document.querySelector(this.props.elementScroll);
+      innerHeight = element.innerHeight;
+    } else {
+      innerHeight = window.innerHeight;
+    }
+    if (top < innerHeight + OFFSET) {
       const { currentPage, pageSize } = this.state;
       this.onPageChange(currentPage + 1, pageSize);
     }
