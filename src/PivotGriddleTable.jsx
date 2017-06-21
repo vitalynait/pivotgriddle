@@ -54,7 +54,12 @@ class PivotGriddleTable extends Component {
 
   checkListener(props = this.props) {
     if (props.fixedTableHead) {
-      document.addEventListener('scroll', this.checkPosition.bind(this));
+      if (this.props.elementScroll && this.props.elementScroll !== '') {
+        const element = document.querySelector(this.props.elementScroll);
+        element.addEventListener('scroll', this.checkPosition.bind(this));
+      } else {
+        document.addEventListener('scroll', this.checkPosition.bind(this));
+      }
       window.addEventListener('resize', this.checkPosition.bind(this));
     }
   }

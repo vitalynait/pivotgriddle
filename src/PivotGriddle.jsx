@@ -392,22 +392,24 @@ class PivotGriddle extends Component {
     obj.loading = true;
     if (customPageChange && typeof customPageChange === 'function') {
       const getCustomPage = customPageChange(nextPage, pageSize);
-      getCustomPage.then((payload) => {
-        if (infinityScroll) {
-          const { rows } = this.state;
-          const newRows = rows.concat(payload.rows);
-          obj.rows = newRows;
-        } else {
-          obj.rows = payload.rows;
-        }
-        obj.currentPage = payload.page || nextPage;
-        obj.pageSize = payload.pageSize;
-        if (payload.sortBy) obj.sortBy = payload.sortBy;
-        if (payload.sortDir) obj.sortDir = payload.sortDir;
-        this.setState({
-          ...obj,
+      if (getCustomPage && getCustomPage instanceof Promise) {
+        getCustomPage.then((payload) => {
+          if (infinityScroll) {
+            const { rows } = this.state;
+            const newRows = rows.concat(payload.rows);
+            obj.rows = newRows;
+          } else {
+            obj.rows = payload.rows;
+          }
+          obj.currentPage = payload.page || nextPage;
+          obj.pageSize = payload.pageSize;
+          if (payload.sortBy) obj.sortBy = payload.sortBy;
+          if (payload.sortDir) obj.sortDir = payload.sortDir;
+          this.setState({
+            ...obj,
+          });
         });
-      });
+      }
     } else {
       obj.currentPage = nextPage;
       this.setState({
@@ -446,6 +448,7 @@ class PivotGriddle extends Component {
           fixedHeadOffset={this.props.fixedHeadOffset}
           fixedHeadClass={this.props.fixedHeadClass}
           rowMetadata={this.props.rowMetadata}
+          elementScroll={this.props.elementScroll}
         />
         {
           needScroll &&
