@@ -4,10 +4,8 @@ import PivotGriddle from 'pivot-griddle';
 import data from '../data/basic';
 import paginationSettings from '../data/pagination.config';
 
-class TemplateEmail extends Component {
-  render() {
-    return <a href={`mailto:${this.props.data}`}>{this.props.data}</a>;
-  }
+const TemplateEmail = ({ data }) => {
+  return <a href={`mailto:${data}`}>{data}</a>;
 };
 
 class ValueComponent extends Component {

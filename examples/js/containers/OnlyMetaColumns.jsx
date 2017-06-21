@@ -8,19 +8,19 @@ const columns = [
   {
     column: 'full_name',
     displayName: 'Полное имя',
-    value: row => `${row.first_name} ${row.last_name}`,
+    template: ({ rowData }) => <div>{rowData.first_name} {rowData.last_name}</div>,
   },
   {
     column: 'balance_year',
     displayName: 'Баланс / возраст',
-    value: (row) => {
-      const divide = parseInt(row.balance, 10) / parseInt(row.age, 10);
+    template: ({ rowData }) => {
+      const divide = parseInt(rowData.balance, 10) / parseInt(rowData.age, 10);
       const perYear = Math.ceil(divide * 100) / 100;
       return (
         <div>
-          {`Age: ${row.age};`}
+          {`Age: ${rowData.age};`}
           <br />
-          {`Balance: ${row.balance};`}
+          {`Balance: ${rowData.balance};`}
           <br />
           {`Per Years: $${perYear}`}
         </div>

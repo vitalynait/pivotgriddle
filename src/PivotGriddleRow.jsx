@@ -130,11 +130,9 @@ class PivotGriddleRow extends Component {
         rowData: row,
         metadata: cell,
       };
-      if (cell.template.prototype instanceof React.Component) {
+      if (typeof cell.template === 'function') {
         const Template = cell.template;
         value = <Template {...props} />;
-      } else if (typeof cell.template === 'function') {
-        value = cell.template(props);
       }
     }
     const groupBy = !parentRow ? this.props.groupBy : false;
