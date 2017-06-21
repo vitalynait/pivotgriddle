@@ -103,7 +103,7 @@ class PivotGriddleTable extends Component {
 
         newTable.id = 'fixed_head';
         newTable.rules = 'all';
-        newTable.style.setProperty('width', `${this._table.clientWidth}px`);
+        newTable.style.setProperty('width', `${this._table.clientWidth}px`, 'important');
         newTable.style.position = 'fixed';
         newTable.style.left = '-9999px';
         newTable.className = `${this._table.className} ${fixedHeadClass}`;
