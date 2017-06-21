@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Inview from 'react-inview';
 
 import PivotGriddleTable from './PivotGriddleTable';
 import PivotGriddlePagination from './PivotGriddlePagination';
@@ -126,11 +125,15 @@ class PivotGriddle extends Component {
     this.sortingRows = this.sortingRows.bind(this);
     this.onSortChange = this.onSortChange.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
-    this.onScroll = this.onScroll.bind(this);
+    this.fetchInView = this.fetchInView.bind(this);
+    this._inview = null;
   }
 
   componentDidMount() {
     this.getGroupRows();
+    if (this.props.infinityScroll) {
+      window.addEventListener('scroll', this.fetchInView);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -145,6 +148,22 @@ class PivotGriddle extends Component {
     this.setState({
       ...state,
     });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.fetchInView);
+  }
+
+  fetchInView() {
+    // const { top } = findDOMNode(this._inview).getBoundingClientRect(); // eslint-disable-line
+    if (!this._inview || !this._inview.getBoundingClientRect()) return;
+    const { top } = this._inview.getBoundingClientRect();
+    const OFFSET = 50; // ensure the element is at least 50 pixels in view
+
+    if (top < window.innerHeight + OFFSET) {
+      const { currentPage, pageSize } = this.state;
+      this.onPageChange(currentPage + 1, pageSize);
+    }
   }
 
   onSortChange(key) {
@@ -380,11 +399,6 @@ class PivotGriddle extends Component {
     }
   }
 
-  onScroll() {
-    const { currentPage, pageSize } = this.state;
-    this.onPageChange(currentPage + 1, pageSize);
-  }
-
   render() {
     const { groupBy, fixedTableHead, depthChildrenKey } = this.props;
     const { sortBy, sortDir, groupBySort, currentPage, pageSize, rows, maxItems, paginationSettings } = this.state;
@@ -418,7 +432,11 @@ class PivotGriddle extends Component {
         />
         {
           needScroll &&
-            <Inview onInview={this.onScroll} />
+          <div
+            ref={(el) => { this._inview = el; }}
+          >
+            &nbsp;
+          </div>
         }
         {
           !this.props.infinityScroll &&
