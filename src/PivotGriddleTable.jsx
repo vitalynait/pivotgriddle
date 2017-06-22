@@ -188,7 +188,9 @@ class PivotGriddleTable extends Component {
   createRows() {
     const { renderColumns, groupBy, depthChildrenKey, rowMetadata } = this.props;
     const { rows } = this.state;
-    if (rows.length <= 0) return false;
+    if (rows.length <= 0) {
+      return false;
+    }
     const getRowKey = rowMetadata && rowMetadata.key ? rowMetadata.key : false;
     const group = groupBy && groupBy !== '' ? groupBy : false;
     const renderer = [];
@@ -205,9 +207,9 @@ class PivotGriddleTable extends Component {
       next.max = next.max > curr ? next.max : curr;
       return next;
     };
-    rows.forEach((row) => {
+    rows.forEach((row, i) => {
       const grouping = groupBy && row.children;
-      const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${row[renderColumns[0].column]}`;
+      const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${i}`;
       let key = baseKey;
       if (grouping) {
         const groupRows = [];
@@ -246,23 +248,24 @@ class PivotGriddleTable extends Component {
         renderer.push(this.renderRow(row, groupingColumns, key));
       } else {
         let rrows = this.renderRow(row, renderColumns, key, false);
-        if (!depthChildrenKey) {
+        if (depthChildrenKey) {
           rrows = <tbody key={`${baseKey}-tbody`}>{rrows}</tbody>;
         }
         renderer.push(rrows);
       }
     });
-    return renderer;
+    return <tbody key={'body-wrap'}>{renderer}</tbody>;
   }
 
   render() {
     const rows = this.createRows();
     const { renderColumns, rowMetadata, groupBy } = this.props;
     const headerClassName = rowMetadata && rowMetadata.headerCssClassName ? rowMetadata.headerCssClassName : '';
+    // console.log('PivotGriddleTable headerClassName', headerClassName);
     return (
       <table
         ref={(el) => { this._table = el; }}
-        className={`sortable ${this.props.customTableClass}${groupBy && groupBy !== '' ? ' grouping' : null}`}
+        className={`sortable ${this.props.customTableClass}${groupBy && groupBy !== '' ? ' grouping' : ''}`}
       >
         <PivotGriddleHeader
           columns={renderColumns}
