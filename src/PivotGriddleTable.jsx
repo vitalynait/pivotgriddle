@@ -254,12 +254,12 @@ class PivotGriddleTable extends Component {
 
   render() {
     const rows = this.createRows();
-    const { renderColumns, rowMetadata } = this.props;
+    const { renderColumns, rowMetadata, groupBy } = this.props;
     const headerClassName = rowMetadata && rowMetadata.headerCssClassName ? rowMetadata.headerCssClassName : '';
     return (
       <table
         ref={(el) => { this._table = el; }}
-        className={`sortable ${this.props.customTableClass}`}
+        className={`sortable ${this.props.customTableClass}${groupBy && groupBy !== '' ? ' grouping' : null}`}
       >
         <PivotGriddleHeader
           columns={renderColumns}
