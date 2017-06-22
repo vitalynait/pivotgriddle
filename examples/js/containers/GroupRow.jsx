@@ -43,6 +43,10 @@ const options = [
     value: 'gender',
     label: 'Пол',
   },
+  {
+    value: 'id',
+    label: 'ID',
+  },
 ];
 
 class GroupRow extends Component {

@@ -188,8 +188,9 @@ class PivotGriddleTable extends Component {
     const { rows } = this.state;
     if (rows.length <= 0) return false;
     const getRowKey = rowMetadata && rowMetadata.key ? rowMetadata.key : false;
+    const group = groupBy && groupBy !== '' ? groupBy : false;
     const renderer = [];
-    const calcCol = renderColumns.filter(col => !!col.calculation);
+    const calcCol = renderColumns.filter(col => !!col.calculation && col.column !== group);
     const calc = (prev, curr) => {
       const next = {
         ...prev,

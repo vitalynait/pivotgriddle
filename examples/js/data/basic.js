@@ -3,11 +3,11 @@ import React from 'react';
 const data = {
   rows: [
     {"id":1,"first_name":"Karleen","last_name":"Upwood","email":"kupwood0@cyberchimps.com","gender":"Female"},
-    {"id":2,"first_name":"Gilbertina","last_name":"Earles","email":"gearles1@yolasite.com","gender":"Female"},
-    {"id":3,"first_name":"Ranna","last_name":"Mercer","email":"rmercer2@va.gov","gender":"Female"},
-    {"id":4,"first_name":"Blythe","last_name":"Kimbury","email":"bkimbury3@hubpages.com","gender":"Female"},
-    {"id":5,"first_name":"Osbourne","last_name":"Stepto","email":"ostepto4@bloglines.com","gender":"Male"},
-    {"id":6,"first_name":"Dani","last_name":"Filpo","email":"dfilpo5@github.com","gender":"Female"},
+    {"id":1,"first_name":"Gilbertina","last_name":"Earles","email":"gearles1@yolasite.com","gender":"Female"},
+    {"id":2,"first_name":"Ranna","last_name":"Mercer","email":"rmercer2@va.gov","gender":"Female"},
+    {"id":2,"first_name":"Blythe","last_name":"Kimbury","email":"bkimbury3@hubpages.com","gender":"Female"},
+    {"id":3,"first_name":"Osbourne","last_name":"Stepto","email":"ostepto4@bloglines.com","gender":"Male"},
+    {"id":3,"first_name":"Dani","last_name":"Filpo","email":"dfilpo5@github.com","gender":"Female"},
     {"id":7,"first_name":"Sydelle","last_name":"Nolan","email":"snolan6@ihg.com","gender":"Female"},
     {"id":8,"first_name":"Neille","last_name":"MacCracken","email":"nmaccracken7@businessinsider.com","gender":"Female"},
     {"id":9,"first_name":"Scarlet","last_name":"Langdridge","email":"slangdridge8@mlb.com","gender":"Female"},

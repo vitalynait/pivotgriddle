@@ -2,9 +2,10 @@
 export function compareKey(a, b, key) {
   if (!isNaN(a[key])) a[key] = a[key].toString();
   if (!isNaN(b[key])) b[key] = b[key].toString();
+  if (!a[key] || !b[key]) return 0;
 
-  const alist = a[key].split(/(\d)/);
-  const blist = b[key].split(/(\d)/);
+  const alist = a[key].split(/(\d+)/);
+  const blist = b[key].split(/(\d+)/);
 
   /* eslint-disable */
   alist.slice(-1) === '' ? alist.pop() : null;
