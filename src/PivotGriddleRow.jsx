@@ -78,7 +78,7 @@ class PivotGriddleRow extends Component {
   renderShowChild() {
     const { showChild } = this.state;
     const element = showChild ? this.props.rowExpandedComponent : this.props.rowCollapsedComponent;
-    return <td onClick={() => this.onChildShow()}>{element}</td>; //eslint-disable-line
+    return <td className="systemCell" onClick={() => this.onChildShow()}>{element}</td>; //eslint-disable-line
   }
 
   renderDepthRow(row, columns) {
