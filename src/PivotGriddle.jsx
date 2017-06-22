@@ -74,6 +74,8 @@ class PivotGriddle extends Component {
     ]),
     sortDir: PropTypes.string,
     elementScroll: PropTypes.string,
+    rowCollapsedComponent: PropTypes.any,
+    rowExpandedComponent: PropTypes.any,
   }
 
   static defaultProps = {
@@ -100,6 +102,8 @@ class PivotGriddle extends Component {
     sortBy: false,
     paginationSettings: {},
     elementScroll: '',
+    rowCollapsedComponent: <span>+</span>,
+    rowExpandedComponent: <span>-</span>,
   }
 
   constructor(props) {
@@ -449,6 +453,8 @@ class PivotGriddle extends Component {
           fixedHeadClass={this.props.fixedHeadClass}
           rowMetadata={this.props.rowMetadata}
           elementScroll={this.props.elementScroll}
+          rowExpandedComponent={this.props.rowExpandedComponent}
+          rowCollapsedComponent={this.props.rowCollapsedComponent}
         />
         {
           needScroll &&

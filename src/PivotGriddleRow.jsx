@@ -76,7 +76,9 @@ class PivotGriddleRow extends Component {
     );
   }
   renderShowChild() {
-    return <td onClick={() => this.onChildShow()}>{this.state.showChild ? '-' : '+'}</td>; //eslint-disable-line
+    const { showChild } = this.state;
+    const element = showChild ? this.props.rowExpandedComponent : this.props.rowCollapsedComponent;
+    return <td onClick={() => this.onChildShow()}>{element}</td>; //eslint-disable-line
   }
 
   renderDepthRow(row, columns) {
@@ -224,6 +226,8 @@ PivotGriddleRow.propTypes = {
     PropTypes.bool,
     PropTypes.object,
   ]).isRequired,
+  rowCollapsedComponent: PropTypes.any.isRequired,
+  rowExpandedComponent: PropTypes.any.isRequired,
 };
 
 export default PivotGriddleRow;

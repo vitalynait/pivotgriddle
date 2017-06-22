@@ -169,6 +169,8 @@ class PivotGriddleTable extends Component {
       totalRow,
       rowKey: key,
       rowMetadata: this.props.rowMetadata,
+      rowCollapsedComponent: this.props.rowCollapsedComponent,
+      rowExpandedComponent: this.props.rowExpandedComponent,
     };
     if (rowMetadata && rowMetadata.templateRow) {
       if (rowMetadata.templateRow.prototype instanceof React.Component) {
@@ -323,6 +325,8 @@ PivotGriddleTable.propTypes = {
     PropTypes.bool,
     PropTypes.object,
   ]).isRequired,
+  rowCollapsedComponent: PropTypes.any.isRequired,
+  rowExpandedComponent: PropTypes.any.isRequired,
 };
 
 export default PivotGriddleTable;
