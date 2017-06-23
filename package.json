@@ -30,6 +30,10 @@
     "react-html-parser": "^1.0.3",
     "resize-observer-polyfill": "^1.4.2"
   },
+  "peerDependencies": {
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
