@@ -80,7 +80,7 @@ class CustomPage extends Component {
           hiddenColumns={hiddenColumns}
           customTableClass="ui table celled"
           customSortChange={this.onSortChange}
-          pagination
+          simplePagination
           paginationSettings={paginationSettings}
           findRowColumns
         />

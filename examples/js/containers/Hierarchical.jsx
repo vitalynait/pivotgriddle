@@ -10,7 +10,7 @@ class Hierarchical extends Component {
       <PivotGriddle
         columns={[]}
         rows={data}
-        pagination
+        simplePagination
         depthChildrenKey="rows"
         customTableClass="ui table definition celled"
         paginationSettings={paginationSettings}

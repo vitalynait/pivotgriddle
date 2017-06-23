@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import PivotGriddleCell from './PivotGriddleCell';
+import gost from './utils';
 
 const hashCode = (s) => s.split('').reduce((a, b) => { a = ((a << 5) - a) + b.charCodeAt(0); return a & a}, 0); // eslint-disable-line
 
@@ -76,17 +77,20 @@ class PivotGriddleRow extends Component {
     );
   }
   renderShowChild() {
+    const { rowKey } = this.props;
     const { showChild } = this.state;
     const element = showChild ? this.props.rowExpandedComponent : this.props.rowCollapsedComponent;
-    return <td className="systemCell" onClick={() => this.onChildShow()}>{element}</td>; //eslint-disable-line
+    const key = `${rowKey}-showChild`;
+    return <td className="systemCell" key={key} onClick={() => this.onChildShow()}>{element}</td>; //eslint-disable-line
   }
 
   renderDepthRow(row, columns) {
     const { depthChildrenKey, rowKey, rowMetadata } = this.props;
     const rows = [];
     if (this.state.showChild) {
-      row[depthChildrenKey].forEach((child, idx) => {
-        rows.push(this.renderRow(child, columns, false, false, true, hashCode(`-${columns[0].column}-${idx}`)));
+      const childs = gost.array.uniqueKey(row[depthChildrenKey], 3);
+      childs.forEach((child) => {
+        rows.push(this.renderRow(child, columns, false, false, true, `-${child.$$keys.$$object_key}`));
       });
     }
     let classes = 'firstRow';
@@ -120,7 +124,7 @@ class PivotGriddleRow extends Component {
           }
         </tr>
         {
-          rows
+          rows.length >= 1 && rows
         }
       </tbody>
     );
@@ -145,6 +149,7 @@ class PivotGriddleRow extends Component {
     const groupBy = !parentRow ? this.props.groupBy : false;
     return (
       <PivotGriddleCell
+        key={`${rowKey}-${cell.column}`}
         rowKey={rowKey}
         value={value}
         cell={cell.column}
@@ -155,13 +160,15 @@ class PivotGriddleRow extends Component {
   }
   renderTotalCell(row, cell) {
     const { groupBy, rowKey } = this.props;
-    if (row === null || !row[cell.column]) return <td />;
+    const key = `${rowKey}-${cell.column}`;
+    if (row === null || !row[cell.column]) return <td key={key} />;
     let data = row[cell.column];
     let rendererCell;
     if (cell.column === groupBy) {
       data = <b>{data}</b>;
       rendererCell = (
         <PivotGriddleCell
+          key={key}
           rowKey={rowKey}
           value={data}
           cell={cell.column}
@@ -179,6 +186,7 @@ class PivotGriddleRow extends Component {
       value = <b>{value}</b>;
       rendererCell = (
         <PivotGriddleCell
+          key={`${rowKey}-total-${cell.column}`}
           rowKey={rowKey}
           value={value}
           cell={cell.column}

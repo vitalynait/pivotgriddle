@@ -1,3 +1,4 @@
+import Hashids from './hashids';
 
 export function compareKey(a, b, key) {
   if (!isNaN(a[key])) a[key] = a[key].toString();
@@ -33,3 +34,46 @@ export function sortDir(arr, dir, key) {
   }
   return arr;
 }
+
+let uniqueKeyCurrentNum = 1;
+
+export const uniqueKey = (arr, label, childIdx = false, depth = 1) => {
+  const hashids = new Hashids();
+  const x = parseInt(label, 10);
+  const digits = [uniqueKeyCurrentNum];
+  uniqueKeyCurrentNum += 1;
+  let obj = {};
+  if (!Array.isArray(arr) && typeof arr === 'object') {
+    arr = [arr];
+  }
+  const result = arr.map((array, index) => {
+    digits[1] = index;
+    array.$$keys = {};
+    if (typeof array === 'object') {
+      let i = 0;
+      Object.keys(array).forEach((key) => {
+        if (key.indexOf('$$') > -1) return true;
+        if (typeof array[key] === 'object') {
+          const deepKeys = uniqueKey([array[key]], index + 10, true, depth + 1);
+          array.$$keys[key] = { ...deepKeys[0].$$keys };
+        } else {
+          if (childIdx === false) {
+            const rowHash = new Hashids(`rowHash${index}`);
+            digits[2] = i;
+            array.$$keys.$$object_key = rowHash.encode(digits);
+          }
+          digits[2] = i;
+          array.$$keys[key] = hashids.encode(digits);
+        }
+        i += 1;
+      });
+      return array;
+    }
+    obj = {
+      value: arr,
+      _id: hashids.encode(digits),
+    };
+    return obj;
+  });
+  return result;
+};

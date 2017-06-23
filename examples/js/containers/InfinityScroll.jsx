@@ -9,7 +9,7 @@ class InfinityScroll extends Component {
       <PivotGriddle
         columns={[]}
         rows={data.rows}
-        pagination
+        simplePagination
         customTableClass="ui table celled"
         infinityScroll
         findRowColumns

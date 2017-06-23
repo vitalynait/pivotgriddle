@@ -38,7 +38,7 @@ class Basic extends Component {
       <PivotGriddle
         columns={columns}
         rows={this.state.rows}
-        pagination
+        simplePagination
         pageSize={15}
         customTableClass="ui table celled"
         paginationSettings={paginationSettings}

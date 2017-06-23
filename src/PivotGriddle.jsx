@@ -45,7 +45,7 @@ class PivotGriddle extends Component {
       PropTypes.bool,
       PropTypes.string,
     ]),
-    pagination: PropTypes.bool,
+    simplePagination: PropTypes.bool,
     customTableClass: PropTypes.string,
     fixedTableHead: PropTypes.bool,
     fixedHeadOffset: PropTypes.number,
@@ -85,7 +85,7 @@ class PivotGriddle extends Component {
     groupChildrenKey: 'children',
     depthChildrenKey: false,
     groupBy: false,
-    pagination: false,
+    simplePagination: false,
     pageSize: false,
     page: false,
     customTableClass: '',
@@ -325,10 +325,10 @@ class PivotGriddle extends Component {
   }
 
   getGroupRows() {
-    const { groupBy, pagination, infinityScroll } = this.props;
+    const { groupBy, simplePagination, infinityScroll } = this.props;
     const { rows, pageSize, currentPage } = this.state;
     let sortableRows = this.sortingRows(rows);
-    if (pagination && !infinityScroll) {
+    if (simplePagination && !infinityScroll) {
       const end = pageSize * currentPage;
       const start = end - pageSize;
       sortableRows = sortableRows.slice(start, end);
@@ -423,14 +423,14 @@ class PivotGriddle extends Component {
   }
 
   render() {
-    const { groupBy, fixedTableHead, depthChildrenKey } = this.props;
+    const { groupBy, fixedTableHead, depthChildrenKey, simplePagination } = this.props;
     const { sortBy, sortDir, groupBySort, currentPage, pageSize, rows, maxItems, paginationSettings } = this.state;
     const renderColumns = this.getRenderColumns();
     if (renderColumns.length <= 0) {
       return <div><table className={this.props.customTableClass}><tr><td>Нет данных</td></tr></table></div>;
     }
     const data = this.getGroupRows();
-    let maxPages = Math.ceil(rows.length / pageSize);
+    let maxPages = simplePagination ? Math.ceil(rows.length / pageSize) : 1;
     if (maxItems && this.props.customPageChange) {
       maxPages = Math.ceil(maxItems / pageSize);
     }

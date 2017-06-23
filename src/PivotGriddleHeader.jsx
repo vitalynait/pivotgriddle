@@ -90,12 +90,14 @@ class PivotGriddleHeader extends Component {
       classRules = `${classRules} onSort`;
       elRules.onClick = () => this.props.onSortChange(col.column);
     }
+    const key = `th-${col.$$keys.column}-${col.column}`;
+
     const ccol = (
       <th
         rowSpan={col.rowSpan > 1 ? col.rowSpan : null}
         colSpan={col.colSpan > 1 ? col.colSpan : null}
         className={classRules}
-        key={`${col.column}-th`}
+        key={key}
         width={col.width ? col.width : null}
         {
           ...elRules
@@ -107,7 +109,7 @@ class PivotGriddleHeader extends Component {
     return ccol;
   }
 
-  renderRow(row, idx) {
+  renderRow(row) {
     const { headerClassName } = this.props;
     let className;
     if (typeof headerClassName === 'function') {
@@ -115,8 +117,10 @@ class PivotGriddleHeader extends Component {
     } else {
       className = headerClassName;
     }
+    row = gost.array.uniqueKey(row, 1);
+    const key = `thr-${row[0].$$keys.$$object_key}`;
     const rrow = (
-      <tr key={idx} className={className}>
+      <tr className={className} key={key}>
         {
           row.map(col => this.renderCols(col))
         }

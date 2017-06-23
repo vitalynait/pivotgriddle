@@ -5,6 +5,7 @@ import parseHTML from 'react-html-parser';
 class PivotGriddleCell extends Component {
   static defaultProps = {
     rowSpan: false,
+    value: '',
   }
   render() {
     const { cell, rowSpan, groupBy, rowKey } = this.props;
@@ -14,8 +15,13 @@ class PivotGriddleCell extends Component {
     if (typeof value === 'string') {
       value = parseHTML(value);
     }
+    if (value === false) {
+      value = value.toString();
+    }
+    const key = `${rowKey}-${cell}`;
+
     return (
-      <td {...cellConfig} key={`${rowKey}-${cell}`}>
+      <td {...cellConfig} key={key}>
         {value}
       </td>
     );
@@ -23,7 +29,7 @@ class PivotGriddleCell extends Component {
 }
 
 PivotGriddleCell.propTypes = {
-  value: PropTypes.any.isRequired,
+  value: PropTypes.any,
   cell: PropTypes.string.isRequired,
   rowSpan: PropTypes.oneOfType([
     PropTypes.bool,

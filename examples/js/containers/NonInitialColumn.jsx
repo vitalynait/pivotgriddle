@@ -35,7 +35,7 @@ class NonInitialColumn extends Component {
       <PivotGriddle
         columns={columns}
         rows={data.rows}
-        pagination
+        simplePagination
         customTableClass="ui table"
         paginationSettings={paginationSettings}
         findRowColumns

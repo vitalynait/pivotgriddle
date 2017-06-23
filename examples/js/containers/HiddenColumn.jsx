@@ -30,7 +30,7 @@ class HiddenColumn extends Component {
         <PivotGriddle
           columns={columns}
           rows={data.rows}
-          pagination
+          simplePagination
           hiddenColumns={hiddenColumns}
           customTableClass="ui table celled"
           paginationSettings={paginationSettings}

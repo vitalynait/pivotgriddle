@@ -75,11 +75,12 @@ class GroupRow extends Component {
         <PivotGriddle
           columns={columns}
           rows={data.rows}
-          pagination
+          simplePagination
           groupBy={this.state.groupBy}
           customTableClass="ui table celled structured"
           paginationSettings={paginationSettings}
           findRowColumns
+          pageSize={5}
         />
       </div>
     );

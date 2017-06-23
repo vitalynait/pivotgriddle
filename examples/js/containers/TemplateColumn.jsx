@@ -72,7 +72,7 @@ class TemplateColumn extends Component {
         <PivotGriddle
           columns={columns}
           rows={data.rows}
-          pagination
+          simplePagination
           customTableClass="ui table celled"
           paginationSettings={paginationSettings}
           findRowColumns

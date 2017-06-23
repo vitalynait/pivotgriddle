@@ -27,7 +27,7 @@ class Sostav extends Component {
       <PivotGriddle
         columns={columns}
         rows={data}
-        pagination
+        simplePagination
         hiddenColumns={hiddenColumns}
         customTableClass="ui table celled"
         paginationSettings={paginationSettings}

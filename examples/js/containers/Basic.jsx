@@ -20,19 +20,15 @@ class Basic extends Component {
     super(props);
   }
   render() {
-    const rowMeta = {
-      key: 'first_name',
-    };
     return (
       <PivotGriddle
         columns={[]}
         rows={data.rows}
-        pagination
-        pageSize={15}
+        simplePagination
+        pageSize={5}
         customTableClass="ui table celled"
         paginationSettings={paginationSettings}
         findRowColumns
-        rowMetadata={rowMeta}
       />
     );
   }
