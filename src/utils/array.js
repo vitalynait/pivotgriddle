@@ -46,8 +46,10 @@ export const uniqueKey = (arr, label, childIdx = false, depth = 1) => {
   if (!Array.isArray(arr) && typeof arr === 'object') {
     arr = [arr];
   }
+  if (depth >= 4) return arr;
   const result = arr.map((array, index) => {
     digits[1] = index;
+    if (!array || array === undefined || array === null || typeof array !== 'object') return false;
     array.$$keys = {};
     if (typeof array === 'object') {
       let i = 0;
@@ -55,7 +57,9 @@ export const uniqueKey = (arr, label, childIdx = false, depth = 1) => {
         if (key.indexOf('$$') > -1) return true;
         if (typeof array[key] === 'object') {
           const deepKeys = uniqueKey([array[key]], index + 10, true, depth + 1);
-          array.$$keys[key] = { ...deepKeys[0].$$keys };
+          if (deepKeys && deepKeys[0] && deepKeys[0] !== undefined) {
+            array.$$keys[key] = { ...deepKeys[0].$$keys };
+          }
         } else {
           if (childIdx === false) {
             const rowHash = new Hashids(`rowHash${index}`);
