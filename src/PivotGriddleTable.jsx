@@ -6,6 +6,8 @@ import PivotGriddleHeader from './PivotGriddleHeader';
 import PivotGriddleRow from './PivotGriddleRow';
 import gost from './utils';
 
+const FIXED_HEAD_ID = 'fixed_head';
+
 class PivotGriddleTable extends Component {
   constructor(props) {
     super(props);
@@ -58,6 +60,7 @@ class PivotGriddleTable extends Component {
       if (this.props.elementScroll && this.props.elementScroll !== '') {
         const element = document.querySelector(this.props.elementScroll);
         element.addEventListener('scroll', this.checkPosition.bind(this));
+        document.addEventListener('scroll', this.checkTopPosition.bind(this));
       } else {
         document.addEventListener('scroll', this.checkPosition.bind(this));
       }
@@ -72,19 +75,43 @@ class PivotGriddleTable extends Component {
     }
   }
 
+  /**
+   *  Определяет когда показывать фиксированную шапку таблицы
+   */
   checkPosition() {
+    if (this._table === null || this.newTable === null) return;
+
     const { fixedHeadOffset, elementScroll } = this.props;
     let element = false;
+
     if (elementScroll && elementScroll !== '') {
       element = document.querySelector(elementScroll);
     }
-    if (this._table === null || this.newTable === null) return;
+
     if (element && this._table.getBoundingClientRect().top - element.getBoundingClientRect().top < fixedHeadOffset) {
       this.newTable.style.left = `${this._table.getBoundingClientRect().left}px`;
     } else if (this._table.getBoundingClientRect().top < fixedHeadOffset) {
       this.newTable.style.left = `${this._table.getBoundingClientRect().left}px`;
     } else {
       this.newTable.style.left = '-9999px';
+    }
+  }
+
+  /**
+   *  Устанавливает верхний отступ для фиксированной шапки,
+   *  если таблица скролится в нутри блока this.props.elementScroll
+   *
+   */
+  checkTopPosition() {
+    if (this._table === null || this.newTable === null) return;
+
+    const { elementScroll } = this.props;
+    const element = document.querySelector(elementScroll);
+    const fixedHeader = document.querySelector(`#${FIXED_HEAD_ID}`);
+
+    if (element) {
+      const topOffset = element.getBoundingClientRect().top;
+      fixedHeader.style.top = `${topOffset}px`;
     }
   }
 
@@ -108,7 +135,7 @@ class PivotGriddleTable extends Component {
           }
         });
 
-        newTable.id = 'fixed_head';
+        newTable.id = FIXED_HEAD_ID;
         newTable.rules = 'all';
         newTable.style.setProperty('width', `${this._table.clientWidth}px`, 'important');
         newTable.style.position = 'fixed';
