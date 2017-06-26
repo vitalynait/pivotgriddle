@@ -352,7 +352,8 @@ class PivotGriddle extends Component {
       sortableRows = Object.keys(grouping).map((value) => {
         const obj = {};
         obj.children = grouping[value];
-        obj[groupBy] = value;
+        const val = value != 'undefined' ? value : ''; // eslint-disable-line
+        obj[groupBy] = val;
         return obj;
       });
       sortableRows = this.sortingRows(sortableRows, true);

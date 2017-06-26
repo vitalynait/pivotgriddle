@@ -73,9 +73,15 @@ class PivotGriddleTable extends Component {
   }
 
   checkPosition() {
-    const { fixedHeadOffset } = this.props;
+    const { fixedHeadOffset, elementScroll } = this.props;
+    let element = false;
+    if (elementScroll && elementScroll !== '') {
+      element = document.querySelector(elementScroll);
+    }
     if (this._table === null || this.newTable === null) return;
-    if (this._table.getBoundingClientRect().top < fixedHeadOffset) {
+    if (element && this._table.getBoundingClientRect().top - element.getBoundingClientRect().top < fixedHeadOffset) {
+      this.newTable.style.left = `${this._table.getBoundingClientRect().left}px`;
+    } else if (this._table.getBoundingClientRect().top < fixedHeadOffset) {
       this.newTable.style.left = `${this._table.getBoundingClientRect().left}px`;
     } else {
       this.newTable.style.left = '-9999px';
