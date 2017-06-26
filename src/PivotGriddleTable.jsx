@@ -81,6 +81,7 @@ class PivotGriddleTable extends Component {
     if (this._table === null || this.newTable === null) return;
     if (element && this._table.getBoundingClientRect().top - element.getBoundingClientRect().top < fixedHeadOffset) {
       this.newTable.style.left = `${this._table.getBoundingClientRect().left}px`;
+      this.newTable.style.top = `${element.getBoundingClientRect().top + fixedHeadOffset}px`;
     } else if (this._table.getBoundingClientRect().top < fixedHeadOffset) {
       this.newTable.style.left = `${this._table.getBoundingClientRect().left}px`;
     } else {
@@ -111,6 +112,7 @@ class PivotGriddleTable extends Component {
         newTable.id = 'fixed_head';
         newTable.rules = 'all';
         newTable.style.setProperty('width', `${this._table.clientWidth}px`, 'important');
+        newTable.style.top = `${this.props.fixedHeadOffset}px`;
         newTable.style.position = 'fixed';
         newTable.style.left = '-9999px';
         newTable.className = `${this._table.className} ${fixedHeadClass}`;
