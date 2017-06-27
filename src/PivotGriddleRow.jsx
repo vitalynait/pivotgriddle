@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import hash from 'object-hash';
 
 import PivotGriddleCell from './PivotGriddleCell';
 import gost from './utils';
@@ -43,11 +44,17 @@ class PivotGriddleRow extends Component {
     });
   }
 
-  preRenderCell(col, row, rowData, totalRow, rowSpan) {
+  preRenderCell(col, row, rowData, totalRow, rowSpan, parentRow = false) {
+    const props = [
+      row,
+      col,
+      rowSpan,
+    ];
+    if (parentRow) props.push(rowData);
     if (!col.children) {
-      return totalRow !== false ? this.renderTotalCell(row, col) : this.renderCell(row, col, rowSpan, rowData);
+      return totalRow !== false ? this.renderTotalCell(row, col) : this.renderCell(...props);
     } else {
-      return col.children.map(ccol => this.preRenderCell(ccol, row[col.column], rowData, totalRow, rowSpan));
+      return col.children.map(ccol => this.preRenderCell(ccol, row[col.column], rowData, totalRow, rowSpan, true));
     }
   }
 
@@ -83,7 +90,7 @@ class PivotGriddleRow extends Component {
           })
         }
         {
-          columns.map(col => this.preRenderCell(col, row, row, totalRow, rowSpan))
+          columns.map(col => this.preRenderCell(col, row, row, totalRow, rowSpan, child))
         }
       </tr>
     );
@@ -93,16 +100,15 @@ class PivotGriddleRow extends Component {
     const { showChild } = this.state;
     const element = showChild ? this.props.rowExpandedComponent : this.props.rowCollapsedComponent;
     const key = `${rowKey}-showChild`;
-    return <td className="systemCell" key={key} onClick={() => this.onChildShow()}>{element}</td>; //eslint-disable-line
+    return <td className="systemCell" key={key} onClick={this.onChildShow}>{element}</td>; //eslint-disable-line
   }
 
   renderDepthRow(row, columns) {
     const { depthChildrenKey, rowKey, rowMetadata } = this.props;
     const rows = [];
     if (this.state.showChild) {
-      const childs = gost.array.uniqueKey(row[depthChildrenKey], 3);
-      childs.forEach((child) => {
-        rows.push(this.renderRow(child, columns, false, false, true, `-${child.$$keys.$$object_key}`));
+      row[depthChildrenKey].forEach((child) => {
+        rows.push(this.renderRow(child, columns, false, false, true, `-${hash(child)}`));
       });
     }
     let classes = 'firstRow';

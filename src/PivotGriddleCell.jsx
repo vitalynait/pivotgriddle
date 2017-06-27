@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import parseHTML from 'react-html-parser';
+import hash from 'object-hash';
 
 class PivotGriddleCell extends Component {
   static defaultProps = {
@@ -18,8 +19,7 @@ class PivotGriddleCell extends Component {
     if (value === false) {
       value = value.toString();
     }
-    const key = `${rowKey}-${cell}`;
-
+    const key = `${rowKey}-${hash({ ...cellConfig, cell })}`;
     return (
       <td {...cellConfig} key={key}>
         {value}

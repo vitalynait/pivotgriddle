@@ -25,17 +25,19 @@
   "author": "Vitaly Nait",
   "license": "MIT",
   "dependencies": {
+    "object-hash": "^1.1.8",
     "prop-types": "^15.5.10",
     "react": "^15.3.1",
     "react-html-parser": "^1.0.3",
+    "recompose": "^0.23.5",
     "resize-observer-polyfill": "^1.4.2"
   },
   "peerDependencies": {
     "react": "^15.3.1",
     "react-dom": "^15.3.1"
   },
-  "publishConfig" : {
-    "registry" : "http://nexus.gost-group.com/repository/npmjs-hosted/"
+  "publishConfig": {
+    "registry": "http://nexus.gost-group.com/repository/npmjs-hosted/"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",

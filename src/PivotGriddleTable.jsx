@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ResizeObserver from 'resize-observer-polyfill';
+import hash from 'object-hash';
 
 import PivotGriddleHeader from './PivotGriddleHeader';
 import PivotGriddleRow from './PivotGriddleRow';
@@ -226,10 +227,9 @@ class PivotGriddleTable extends Component {
   }
 
   createRows() {
-    const { renderColumns, groupBy, rowMetadata } = this.props;
-    let { rows } = this.state;
+    const { renderColumns, groupBy } = this.props;
+    const { rows } = this.state;
     if (rows.length <= 0) return false;
-    // const getRowKey = rowMetadata && rowMetadata.key ? rowMetadata.key : false;
     const getRowKey = false;
     const group = groupBy && groupBy !== '' ? groupBy : false;
     const renderer = [];
@@ -246,10 +246,9 @@ class PivotGriddleTable extends Component {
       next.max = next.max > curr ? next.max : curr;
       return next;
     };
-    if (!getRowKey) rows = gost.array.uniqueKey(rows, 1);
     rows.forEach((row) => {
       const grouping = groupBy && row.children;
-      const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${row.$$keys.$$object_key}`;
+      const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${hash(row)}`;
       let key = baseKey;
       if (grouping) {
         const groupRows = [];
@@ -257,7 +256,7 @@ class PivotGriddleTable extends Component {
         const childColumns = renderColumns.filter(item => item.column !== groupBy);
         firstRow[groupBy] = row[groupBy];
         const rowSpan = row.children.length;
-        const childRows = gost.array.uniqueKey(row.children.slice(1), 2);
+        const childRows = [...row.children.slice(1)];
         let totals;
         if (calcCol.length >= 1 && row.children.length >= 2) {
           totals = {};
@@ -274,7 +273,7 @@ class PivotGriddleTable extends Component {
         }
         groupRows.push(this.renderRow(firstRow, renderColumns, key, rowSpan));
         childRows.forEach((childRow) => {
-          key = `${baseKey}-c-${childRow.$$keys.$$object_key}`;
+          key = `${baseKey}-c-${hash(childRow)}`;
           groupRows.push(this.renderRow(childRow, childColumns, key, false));
         });
         if (totals) {

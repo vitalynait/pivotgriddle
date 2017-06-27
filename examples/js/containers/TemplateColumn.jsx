@@ -10,7 +10,7 @@ const TemplateEmail = ({ data }) => {
 
 class ValueComponent extends Component {
   render() {
-    return <div>{this.props.row.email}</div>;
+    return <div>{this.props.rowData.email}</div>;
   }
 }
 
@@ -34,7 +34,7 @@ const columns = [
   },
   {
     column: 'valueComponent',
-    value: ValueComponent,
+    template: ValueComponent,
   },
 ];
 

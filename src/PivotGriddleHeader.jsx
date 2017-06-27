@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import hash from 'object-hash';
 
 import gost from './utils';
 
@@ -87,7 +88,7 @@ class PivotGriddleHeader extends Component {
       classRules = `${classRules} onSort`;
       elRules.onClick = () => this.props.onSortChange(col.column);
     }
-    const key = `th-${col.$$keys.column}-${col.column}`;
+    const key = `th-${hash(col)}-${hash(col.column)}`;
 
     const ccol = (
       <th
@@ -114,8 +115,7 @@ class PivotGriddleHeader extends Component {
     } else {
       className = headerClassName;
     }
-    row = gost.array.uniqueKey(row, 1);
-    const key = `thr-${row[0].$$keys.$$object_key}`;
+    const key = `thr-${hash(row[0])}`;
     const rrow = (
       <tr className={className} key={key}>
         {

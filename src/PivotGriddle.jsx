@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { shouldUpdate } from 'recompose';
 
 import PivotGriddleTable from './PivotGriddleTable';
 import PivotGriddlePagination from './PivotGriddlePagination';
@@ -25,14 +26,8 @@ const defaultPaginationSettings = {
 
 class PivotGriddle extends Component {
   static propTypes = {
-    page: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.number,
-    ]),
-    pageSize: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.number,
-    ]),
+    page: PropTypes.number,
+    pageSize: PropTypes.number,
     columns: PropTypes.array,
     hiddenColumns: PropTypes.array,
     rows: PropTypes.array,
@@ -86,8 +81,8 @@ class PivotGriddle extends Component {
     depthChildrenKey: false,
     groupBy: false,
     simplePagination: false,
-    pageSize: false,
-    page: false,
+    pageSize: 20,
+    page: 1,
     customTableClass: '',
     fixedTableHead: false,
     fixedHeadOffset: 0,
@@ -109,16 +104,14 @@ class PivotGriddle extends Component {
   constructor(props) {
     super(props);
 
-    const currentPage = props.page ? props.page : 1;
-    const pageSize = props.pageSize ? props.pageSize : 20;
     const pag = Object.assign(defaultPaginationSettings, props.paginationSettings);
 
     this.state = {
       groupBySort: 'asc',
       sortDir: props.sortDir,
       sortBy: props.sortBy,
-      currentPage,
-      pageSize,
+      currentPage: props.page,
+      pageSize: props.pageSize,
       rows: props.rows,
       maxItems: props.maxItems,
       loading: false,
@@ -152,7 +145,7 @@ class PivotGriddle extends Component {
     if (nextProps.sortDir !== this.state.sortDir) state.sortDir = nextProps.sortDir;
     if (nextProps.sortBy !== this.state.sortBy) state.sortBy = nextProps.sortBy;
     if (nextProps.maxItems !== this.state.maxItems) state.maxItems = nextProps.maxItems;
-    if (nextProps.page !== this.state.currentPage) state.currentPage = nextProps.page ? nextProps.page : 1;
+    if (nextProps.page && nextProps.page !== this.state.currentPage) state.currentPage = nextProps.page;
     if (nextProps.pageSize !== this.state.pageSize) state.pageSize = nextProps.pageSize ? nextProps.pageSize : 20;
     state.paginationSettings = Object.assign(defaultPaginationSettings, nextProps.paginationSettings);
     this.setState({
@@ -343,9 +336,7 @@ class PivotGriddle extends Component {
         if (!grouping[row[groupBy]]) {
           grouping[row[groupBy]] = [];
         }
-        const child = {
-          ...row,
-        };
+        const child = { ...row };
         delete child[groupBy];
         grouping[row[groupBy]].push(child);
       });
@@ -363,10 +354,10 @@ class PivotGriddle extends Component {
 
   sortingRows(rows, childs = false) {
     const { groupBy, depthChildrenKey } = this.props;
-    const { groupBySort, sortBy, sortDir } = this.state;
+    const { sortBy, sortDir } = this.state;
     let sortableRows = [...rows];
     if (groupBy) {
-      gost.array.sortDir(sortableRows, groupBySort, groupBy);
+      gost.array.sortDir(sortableRows, this.state.groupBySort, groupBy);
       if (sortBy && childs) {
         sortableRows = sortableRows.map((row) => {
           gost.array.sortDir(row.children, sortDir, sortBy);
@@ -377,13 +368,10 @@ class PivotGriddle extends Component {
       gost.array.sortDir(sortableRows, sortDir, sortBy);
       if (depthChildrenKey) {
         sortableRows = sortableRows.map((row) => {
-          const newRow = {
-            ...row,
-          };
           if (row[depthChildrenKey] && row[depthChildrenKey].length > 1) {
-            newRow[depthChildrenKey] = this.sortingRows(row[depthChildrenKey]);
+            row[depthChildrenKey] = this.sortingRows(row[depthChildrenKey]);
           }
-          return newRow;
+          return row;
         });
       }
     }
@@ -391,18 +379,14 @@ class PivotGriddle extends Component {
   }
 
   onPageChange(nextPage) {
-    const { customPageChange, infinityScroll } = this.props;
-    const { pageSize } = this.state;
-    const obj = {};
-    obj.loading = true;
+    const { customPageChange } = this.props;
     if (customPageChange && typeof customPageChange === 'function') {
-      const getCustomPage = customPageChange(nextPage, pageSize);
+      const getCustomPage = customPageChange(nextPage, this.state.pageSize);
       if (getCustomPage && getCustomPage instanceof Promise) {
         getCustomPage.then((payload) => {
-          if (infinityScroll) {
-            const { rows } = this.state;
-            const newRows = rows.concat(payload.rows);
-            obj.rows = newRows;
+          const obj = {};
+          if (this.props.infinityScroll) {
+            obj.rows = this.state.rows.concat(payload.rows);
           } else {
             obj.rows = payload.rows;
           }
@@ -416,9 +400,8 @@ class PivotGriddle extends Component {
         });
       }
     } else {
-      obj.currentPage = nextPage;
       this.setState({
-        ...obj,
+        currentPage: nextPage,
       });
     }
   }
@@ -445,7 +428,7 @@ class PivotGriddle extends Component {
           sortDir={sortDir}
           groupBySort={groupBySort}
           groupBy={groupBy}
-          onSortChange={key => this.onSortChange(key)}
+          onSortChange={this.onSortChange}
           customTableClass={this.props.customTableClass}
           rows={data}
           depthChildrenKey={depthChildrenKey}
