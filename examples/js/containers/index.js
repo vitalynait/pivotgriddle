@@ -7,6 +7,7 @@ export NonInitialColumn from './NonInitialColumn';
 export HiddenColumn from './HiddenColumn';
 export GroupRow from './GroupRow';
 export Sostav from './Sostav';
+export SostavHard from './SostavHard';
 export Hierarchical from './Hierarchical';
 export OnlyMetaColumns from './OnlyMetaColumns';
 export FixedHead from './FixedHead';

@@ -30,6 +30,7 @@ class App extends React.Component {
               <Route exact path="/examples/hiddencolumn" component={Examples.HiddenColumn} />
               <Route exact path="/examples/grouprow" component={Examples.GroupRow} />
               <Route exact path="/examples/sostav" component={Examples.Sostav} />
+              <Route exact path="/examples/sostavhard" component={Examples.SostavHard} />
               <Route exact path="/examples/hierarchical" component={Examples.Hierarchical} />
               <Route exact path="/examples/onlymetacolumns" component={Examples.OnlyMetaColumns} />
               <Route exact path="/examples/fixedhead" component={Examples.FixedHead} />

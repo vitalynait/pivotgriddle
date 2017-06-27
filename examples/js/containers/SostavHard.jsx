@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import paginationSettings from '../data/pagination.config';
+import './sostav.scss';
 
 const hiddenColumns = ['age', 'eyeColor', 'isActive', 'index'];
 
@@ -234,14 +235,16 @@ const data = [
 class SostavHard extends Component {
   render() {
     return (
-      <PivotGriddle
-        columns={columns}
-        rows={data}
-        simplePagination
-        hiddenColumns={hiddenColumns}
-        customTableClass="ui table celled"
-        paginationSettings={paginationSettings}
-      />
+      <div className="hardhead">
+        <PivotGriddle
+          columns={columns}
+          rows={data}
+          simplePagination
+          hiddenColumns={hiddenColumns}
+          customTableClass="ui table celled"
+          paginationSettings={paginationSettings}
+        />
+      </div>
     );
   }
 }

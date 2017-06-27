@@ -312,7 +312,7 @@ class PivotGriddle extends Component {
       } else if (!findRowColumns) {
         if (col.column === groupBy) {
           renderColumns.unshift(col);
-        } else {
+        } else if (!!col.column) {
           renderColumns.push(col);
         }
         removableColumns.splice(idx);

@@ -26,6 +26,7 @@ class SidebarNav extends Component {
           <Link className="item violet" to="/examples/hiddencolumn">Скрытие ячеек</Link>
           <Link className="item violet" to="/examples/grouprow">Группировка строк</Link>
           <Link className="item violet" to="/examples/sostav">Составная шапка и данные</Link>
+          <Link className="item violet" to="/examples/sostavhard">Составная шапка и данные (сложная)</Link>
           <Link className="item violet" to="/examples/hierarchical">Иерархическая таблица</Link>
           <Link className="item violet" to="/examples/onlymetacolumns">Только колонки из настроек</Link>
           <Link className="item violet" to="/examples/fixedhead">Фиксированная шапка</Link>
