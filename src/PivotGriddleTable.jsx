@@ -60,10 +60,8 @@ class PivotGriddleTable extends Component {
       if (this.props.elementScroll && this.props.elementScroll !== '') {
         const element = document.querySelector(this.props.elementScroll);
         element.addEventListener('scroll', this.checkPosition.bind(this));
-        document.addEventListener('scroll', this.checkTopPosition.bind(this));
-      } else {
-        document.addEventListener('scroll', this.checkPosition.bind(this));
       }
+      document.addEventListener('scroll', this.checkPosition.bind(this));
       window.addEventListener('resize', this.checkPosition.bind(this));
     }
   }
@@ -108,18 +106,18 @@ class PivotGriddleTable extends Component {
    *  если таблица скролится в нутри блока this.props.elementScroll
    *
    */
-  checkTopPosition() {
-    if (this._table === null || this.newTable === null) return;
+  // checkTopPosition() {
+  //   if (this._table === null || this.newTable === null) return;
 
-    const { elementScroll } = this.props;
-    const element = document.querySelector(elementScroll);
-    const fixedHeader = document.querySelector(`#${FIXED_HEAD_ID}`);
+  //   const { elementScroll } = this.props;
+  //   const element = document.querySelector(elementScroll);
+  //   const fixedHeader = document.querySelector(`#${FIXED_HEAD_ID}`);
 
-    if (element) {
-      const topOffset = element.getBoundingClientRect().top;
-      fixedHeader.style.top = `${topOffset}px`;
-    }
-  }
+  //   if (element) {
+  //     const topOffset = element.getBoundingClientRect().top;
+  //     fixedHeader.style.top = `${topOffset}px`;
+  //   }
+  // }
 
   fixHead(props = this.props) {
     const { fixedHeadClass } = props;
