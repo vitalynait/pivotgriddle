@@ -42,6 +42,15 @@ class PivotGriddleRow extends Component {
       showChild: !this.state.showChild,
     });
   }
+
+  preRenderCell(col, row, rowData, totalRow, rowSpan) {
+    if (!col.children) {
+      return totalRow !== false ? this.renderTotalCell(row, col) : this.renderCell(row, col, rowSpan, rowData);
+    } else {
+      return col.children.map(ccol => this.preRenderCell(ccol, row[col.column], rowData, totalRow, rowSpan));
+    }
+  }
+
   renderRow(row, columns, rowSpan, totalRow = false, child = false, childKey = '') {
     const { rowKey, rowMetadata } = this.props;
     let classes = '';
@@ -63,7 +72,7 @@ class PivotGriddleRow extends Component {
         key={key}
       >
         {
-          columns.map((col) => {
+          false && columns.map((col) => {
             if (!col.children) {
               return totalRow !== false ? this.renderTotalCell(row, col) : this.renderCell(row, col, rowSpan);
             } else { // eslint-disable-line
@@ -72,6 +81,9 @@ class PivotGriddleRow extends Component {
               return childColumns.map(ccol => totalRow !== false ? this.renderTotalCell(row, col) : this.renderCell(childData, ccol, rowSpan, row));
             }
           })
+        }
+        {
+          columns.map(col => this.preRenderCell(col, row, row, totalRow, rowSpan))
         }
       </tr>
     );

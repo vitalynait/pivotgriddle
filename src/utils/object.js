@@ -3,7 +3,7 @@ export const getDepth = (col, childKey) => {
   col.forEach((node) => {
     let nodeDepth = 0;
     if (node[childKey]) {
-      nodeDepth = 1 + getDepth(node[childKey]);
+      nodeDepth = 1 + getDepth(node[childKey], childKey);
     }
     depth = nodeDepth > depth ? nodeDepth : depth;
   });

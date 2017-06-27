@@ -7,43 +7,41 @@ class PivotGriddleHeader extends Component {
   constructor(props) {
     super(props);
     this.tableParse = [];
-    this.createColumns();
+    this.createColumns(props);
   }
 
-  shouldComponentUpdate() {
-    this.createColumns();
+  shouldComponentUpdate(np) {
+    this.createColumns(np);
     return true;
   }
 
-  columnParse(tree, depth = 0, idx = 0) {
+  getColSpan(tree, depth = 0, maxChild = 0) {
+    if (!tree.children) return 0;
+    tree.children.forEach((leaf) => {
+      if (leaf.children) {
+        const childLength = this.getColSpan(leaf, depth + 1);
+        maxChild += childLength;
+      } else {
+        maxChild += 1;
+      }
+    });
+    return maxChild;
+  }
+
+  columnParse(tree, depth = 0, idx = 0, maxChild = 0) {
     let reassignDepth = depth;
     if (reassignDepth === 0) {
       reassignDepth = gost.object.getDepth(tree, 'children');
     }
     let rowSpan = depth;
     let childArr = 0;
-    let colSpan = 0;
     let sortable = idx === 0;
     tree.forEach((node) => {
-      let currentColSpan = 0;
+      const currentColSpan = this.getColSpan(node);
       if (node.children) {
         sortable = false;
-        childArr = this.columnParse(node.children, reassignDepth - 1, idx + 1);
+        childArr = this.columnParse(node.children, reassignDepth - 1, idx + 1, maxChild);
         rowSpan = reassignDepth - childArr.depth;
-        if (node.children.length <= 1) {
-          colSpan = childArr.colSpan;
-        } else {
-          let razn = 0;
-          if (childArr.colSpan >= 2) {
-            razn = node.children.length - childArr.colSpan;
-          }
-          if (childArr.colSpan === node.children.length) {
-            razn = 1;
-          }
-          const summ = node.children.length + childArr.colSpan;
-          colSpan = summ - razn;
-        }
-        currentColSpan = colSpan;
       } else {
         sortable = node.sortable || true;
         rowSpan = reassignDepth;
@@ -63,14 +61,13 @@ class PivotGriddleHeader extends Component {
     });
     return {
       rowSpan,
-      colSpan,
       depth,
     };
   }
 
-  createColumns() {
+  createColumns(p = this.props) {
     this.tableParse = [];
-    this.columnParse(this.props.columns);
+    this.columnParse(p.columns);
     return this.tableParse;
   }
 
