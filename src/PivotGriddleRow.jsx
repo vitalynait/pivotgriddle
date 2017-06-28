@@ -44,13 +44,14 @@ class PivotGriddleRow extends Component {
     });
   }
 
-  preRenderCell(col, row, rowData, totalRow, rowSpan, parentRow = false) {
+  preRenderCell(col, row, rowData, totalRow, rowSpan, parentRow = false, colSpan) {
     const props = [
       row,
       col,
       rowSpan,
     ];
     if (parentRow) props.push(rowData);
+    props[4] = colSpan;
     if (!col.children) {
       return totalRow !== false ? this.renderTotalCell(row, col) : this.renderCell(...props);
     } else {
@@ -58,7 +59,7 @@ class PivotGriddleRow extends Component {
     }
   }
 
-  renderRow(row, columns, rowSpan, totalRow = false, child = false, childKey = '') {
+  renderRow(row, columns, rowSpan, totalRow = false, child = false, childKey = '', colSpan = false) {
     const { rowKey, rowMetadata } = this.props;
     let classes = '';
     const key = `${rowKey}${childKey}`;
@@ -90,7 +91,7 @@ class PivotGriddleRow extends Component {
           })
         }
         {
-          columns.map(col => this.preRenderCell(col, row, row, totalRow, rowSpan, child))
+          columns.map(col => this.preRenderCell(col, row, row, totalRow, rowSpan, child, colSpan))
         }
       </tr>
     );
@@ -149,7 +150,7 @@ class PivotGriddleRow extends Component {
     return rrow;
   }
 
-  renderCell(row, cell, rowSpan, parentRow = false) {
+  renderCell(row, cell, rowSpan, parentRow = false, colSpan = false) {
     const { rowKey } = this.props;
     let value = getValue(cell, row, parentRow);
     if (cell.template) {
@@ -173,6 +174,7 @@ class PivotGriddleRow extends Component {
         cell={cell.column}
         rowSpan={rowSpan}
         groupBy={groupBy}
+        colSpan={colSpan}
       />
     );
   }
@@ -182,7 +184,7 @@ class PivotGriddleRow extends Component {
     if (row === null || !row[cell.column]) return <td key={key} />;
     let data = row[cell.column];
     let rendererCell;
-    if (cell.column === groupBy) {
+    if (cell.column === groupBy || typeof data !== 'object') {
       data = <b>{data}</b>;
       rendererCell = (
         <PivotGriddleCell
@@ -216,11 +218,11 @@ class PivotGriddleRow extends Component {
     return rendererCell;
   }
   render() {
-    const { row, depthChildrenKey, columns, rowSpan, groupBy, wrapping, totalRow, rowKey } = this.props;
+    const { row, depthChildrenKey, columns, rowSpan, groupBy, wrapping, totalRow, rowKey, colSpan } = this.props;
     if (row[depthChildrenKey] && row[depthChildrenKey].length >= 1 && !groupBy) {
       return this.renderDepthRow(row, columns);
     } else {
-      const rrow = this.renderRow(row, columns, rowSpan, totalRow);
+      const rrow = this.renderRow(row, columns, rowSpan, totalRow, false, '', colSpan);
       if (wrapping || depthChildrenKey) {
         return <tbody key={`tbody-${rowKey}`}>{rrow}</tbody>;
       } else {

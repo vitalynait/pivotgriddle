@@ -3,100 +3,64 @@ import Select from 'react-select';
 import 'react-select/scss/default.scss';
 import PivotGriddle from 'pivot-griddle';
 
+import data from '../data/basic';
 import paginationSettings from '../data/pagination.config';
 
 const columns = [
   {
-    column: 'country',
-    displayName: 'Страна',
+    column: 'first_name',
+    displayName: 'Имя',
   },
   {
-    column: 'type',
-    displayName: 'Откуда данные',
+    column: 'last_name',
+    displayName: 'Фамилия',
   },
   {
-    column: 2015,
-    calculation: 'sum',
+    column: 'email',
+    displayName: 'Эл. почта',
+    template: props => <a href={`mailto:${props.data}`}>{props.data}</a>,
   },
   {
-    column: 2016,
-    calculation: 'sum',
+    column: 'gender',
+    displayName: 'Пол',
   },
   {
-    column: 2017,
-    calculation: 'sum',
+    column: 'id',
+    calculation: 'avg',
   },
 ];
 
 const options = [
   {
-    value: 'type',
-    label: 'Откуда данные',
+    value: 'first_name',
+    label: 'Имя',
   },
   {
-    value: 'country',
-    label: 'Страна',
-  },
-];
-
-const data = [
-  {
-    country: 'Россия',
-    type: 'Импорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
+    value: 'last_name',
+    label: 'Фамилия',
   },
   {
-    country: 'Россия',
-    type: 'Экспорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
+    value: 'gender',
+    label: 'Пол',
   },
   {
-    country: 'Украина',
-    type: 'Импорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
-  },
-  {
-    country: 'Украина',
-    type: 'Экспорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
-  },
-  {
-    country: 'Казахстан',
-    type: 'Импорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
-  },
-  {
-    country: 'Казахстан',
-    type: 'Экспорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
+    value: 'id',
+    label: 'ID',
   },
 ];
 
 const gridSettings = {
   totalPosition: 'bottom',
   totalText: 'Всего:',
-  type: 'row',
+  type: 'column',
 };
 
-class GroupRow extends Component {
+class GroupRowColumn extends Component {
   constructor(props) {
     super(props);
     this.state = {
       groupBy: false,
     };
-
     this.onSelectChange = this.onSelectChange.bind(this);
   }
   onSelectChange({ value }) {
@@ -117,11 +81,13 @@ class GroupRow extends Component {
         </label>
         <PivotGriddle
           columns={columns}
-          rows={data}
+          rows={data.rows}
           simplePagination
           groupBy={this.state.groupBy}
           customTableClass="ui table celled structured"
           paginationSettings={paginationSettings}
+          findRowColumns
+          pageSize={5}
           gridSettings={gridSettings}
         />
       </div>
@@ -129,4 +95,4 @@ class GroupRow extends Component {
   }
 }
 
-export default GroupRow;
+export default GroupRowColumn;

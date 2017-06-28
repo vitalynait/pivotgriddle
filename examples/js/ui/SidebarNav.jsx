@@ -24,7 +24,8 @@ class SidebarNav extends Component {
           <Link className="item violet" to="/examples/templatecolumn">Шаблон ячейки</Link>
           <Link className="item violet" to="/examples/noninitialcolumn">Генерируемая ячейка</Link>
           <Link className="item violet" to="/examples/hiddencolumn">Скрытие ячеек</Link>
-          <Link className="item violet" to="/examples/grouprow">Группировка строк</Link>
+          <Link className="item violet" to="/examples/grouprowcolumn">Группировка строк (колонкой)</Link>
+          <Link className="item violet" to="/examples/grouprow">Группировка строк (строкой)</Link>
           <Link className="item violet" to="/examples/sostav">Составная шапка и данные</Link>
           <Link className="item violet" to="/examples/sostavhard">Составная шапка и данные (сложная)</Link>
           <Link className="item violet" to="/examples/hierarchical">Иерархическая таблица</Link>

@@ -23,5 +23,22 @@ body {
   top: 0px;
   margin-top: 0px;
 }
+.ui.table.grouping.grouping-row {
+  tbody {
+    tr:nth-child(1) {
+      td {
+        text-align: center;
+        font-weight: bold;
+        border-bottom: 1px solid rgba(34,36,38,.1);
+      }
+    }
+    .totalRow {
+      td {
+        background: inherit;
+        border-top: 1px solid rgba(34,36,38,.1);
+      }
+    }
+  }
+}
 
 @import "./semantic.scss";

@@ -29,7 +29,7 @@ class PivotGriddleHeader extends Component {
     return maxChild;
   }
 
-  columnParse(tree, depth = 0, idx = 0, maxChild = 0) {
+  columnParse(tree, depth = 0, idx = 0, maxChild = 0, parentKey = false) {
     let reassignDepth = depth;
     if (reassignDepth === 0) {
       reassignDepth = gost.object.getDepth(tree, 'children');
@@ -39,9 +39,10 @@ class PivotGriddleHeader extends Component {
     let sortable = idx === 0;
     tree.forEach((node) => {
       const currentColSpan = this.getColSpan(node);
+      const hashKey = hash({ parentKey, column: node });
       if (node.children) {
         sortable = false;
-        childArr = this.columnParse(node.children, reassignDepth - 1, idx + 1, maxChild);
+        childArr = this.columnParse(node.children, reassignDepth - 1, idx + 1, maxChild, hashKey);
         rowSpan = reassignDepth - childArr.depth;
       } else {
         sortable = node.sortable || true;
@@ -53,6 +54,8 @@ class PivotGriddleHeader extends Component {
         rowSpan,
         colSpan: currentColSpan,
         sortable,
+        parents: node.parents,
+        $$hash: hashKey,
       };
       if (node.width) item.width = node.width;
       if (!this.tableParse[idx]) {
@@ -72,7 +75,7 @@ class PivotGriddleHeader extends Component {
     return this.tableParse;
   }
 
-  renderCols(col) {
+  renderCols(col, rowKey) {
     const { sortBy, sortDir, groupBy, groupBySort } = this.props;
     const columnName = col.column !== 'showChild' ? col.displayName || col.column : null;
     let classRules = '';
@@ -88,7 +91,7 @@ class PivotGriddleHeader extends Component {
       classRules = `${classRules} onSort`;
       elRules.onClick = () => this.props.onSortChange(col.column);
     }
-    const key = `th-${hash(col)}-${hash(col.column)}`;
+    const key = `th-${rowKey}-${col.$$hash}`;
 
     const ccol = (
       <th
@@ -115,11 +118,11 @@ class PivotGriddleHeader extends Component {
     } else {
       className = headerClassName;
     }
-    const key = `thr-${hash(row[0])}`;
+    const key = `thr-${row[0].$$hash}`;
     const rrow = (
       <tr className={className} key={key}>
         {
-          row.map(col => this.renderCols(col))
+          row.map(col => this.renderCols(col, key))
         }
       </tr>
     );

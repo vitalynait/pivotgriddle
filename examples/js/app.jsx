@@ -28,6 +28,7 @@ class App extends React.Component {
               <Route exact path="/examples/templatecolumn" component={Examples.TemplateColumn} />
               <Route exact path="/examples/noninitialcolumn" component={Examples.NonInitialColumn} />
               <Route exact path="/examples/hiddencolumn" component={Examples.HiddenColumn} />
+              <Route exact path="/examples/grouprowcolumn" component={Examples.GroupRowColumn} />
               <Route exact path="/examples/grouprow" component={Examples.GroupRow} />
               <Route exact path="/examples/sostav" component={Examples.Sostav} />
               <Route exact path="/examples/sostavhard" component={Examples.SostavHard} />

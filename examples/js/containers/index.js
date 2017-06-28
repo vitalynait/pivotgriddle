@@ -6,6 +6,7 @@ export TemplateColumn from './TemplateColumn';
 export NonInitialColumn from './NonInitialColumn';
 export HiddenColumn from './HiddenColumn';
 export GroupRow from './GroupRow';
+export GroupRowColumn from './GroupRowColumn';
 export Sostav from './Sostav';
 export SostavHard from './SostavHard';
 export Hierarchical from './Hierarchical';

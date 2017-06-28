@@ -9,10 +9,11 @@ class PivotGriddleCell extends Component {
     value: '',
   }
   render() {
-    const { cell, rowSpan, groupBy, rowKey } = this.props;
+    const { cell, rowSpan, groupBy, rowKey, colSpan } = this.props;
     let value = this.props.value;
     const cellConfig = {};
     if (rowSpan && cell === groupBy) cellConfig.rowSpan = rowSpan;
+    if (colSpan) cellConfig.colSpan = colSpan;
     if (typeof value === 'string') {
       value = parseHTML(value);
     }
