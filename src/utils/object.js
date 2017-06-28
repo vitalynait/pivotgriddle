@@ -10,4 +10,17 @@ export const getDepth = (col, childKey) => {
   return depth;
 };
 
+export const getColSpan = (tree, depth = 0, maxChild = 0) => {
+  if (!tree.children) return 0;
+  tree.children.forEach((leaf) => {
+    if (leaf.children) {
+      const childLength = getColSpan(leaf, depth + 1);
+      maxChild += childLength;
+    } else {
+      maxChild += 1;
+    }
+  });
+  return maxChild;
+};
+
 export const DEFAULT_DEPTH = 0;

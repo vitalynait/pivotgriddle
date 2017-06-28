@@ -16,19 +16,6 @@ class PivotGriddleHeader extends Component {
     return true;
   }
 
-  getColSpan(tree, depth = 0, maxChild = 0) {
-    if (!tree.children) return 0;
-    tree.children.forEach((leaf) => {
-      if (leaf.children) {
-        const childLength = this.getColSpan(leaf, depth + 1);
-        maxChild += childLength;
-      } else {
-        maxChild += 1;
-      }
-    });
-    return maxChild;
-  }
-
   columnParse(tree, depth = 0, idx = 0, maxChild = 0, parentKey = false) {
     let reassignDepth = depth;
     if (reassignDepth === 0) {
@@ -38,7 +25,7 @@ class PivotGriddleHeader extends Component {
     let childArr = 0;
     let sortable = idx === 0;
     tree.forEach((node) => {
-      const currentColSpan = this.getColSpan(node);
+      const currentColSpan = gost.object.getColSpan(node);
       const hashKey = hash({ parentKey, column: node });
       if (node.children) {
         sortable = false;

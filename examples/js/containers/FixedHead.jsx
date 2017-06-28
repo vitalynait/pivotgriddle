@@ -35,23 +35,33 @@ class FixedHead extends Component {
 
     this.state = {
       fixedTableHead: false,
+      fixedTableHeadBox: false,
     };
     this.fixTable = this.fixTable.bind(this);
+    this.fixTableBox = this.fixTableBox.bind(this);
   }
   fixTable() {
     this.setState({
       fixedTableHead: !this.state.fixedTableHead,
     });
   }
+  fixTableBox() {
+    this.setState({
+      fixedTableHeadBox: !this.state.fixedTableHeadBox,
+    });
+  }
   render() {
     return (
       <div>
+        <h3>Фиксация шапки к документу</h3>
         <button
           className="ui primary basic button"
           onClick={this.fixTable}
         >
           {this.state.fixedTableHead ? 'Открепить шапку' : 'Закрепить шапку'}
         </button>
+        <br />
+        <br />
         <PivotGriddle
           columns={columns}
           rows={data}
@@ -61,6 +71,25 @@ class FixedHead extends Component {
           fixedHeadOffset={0}
           paginationSettings={paginationSettings}
         />
+        <h3>Фиксация шапки к блоку</h3>
+        <button
+          className="ui primary basic button"
+          onClick={this.fixTableBox}
+        >
+          {this.state.fixedTableHeadBox ? 'Открепить шапку' : 'Закрепить шапку'}
+        </button>
+        <br />
+        <br />
+        <div className="fixed_box">
+          <PivotGriddle
+            columns={columns}
+            rows={data}
+            customTableClass="ui table celled"
+            fixedTableHead={this.state.fixedTableHeadBox}
+            paginationSettings={paginationSettings}
+            elementScroll=".fixed_box"
+          />
+        </div>
       </div>
     );
   }

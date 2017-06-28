@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ResizeObserver from 'resize-observer-polyfill';
 import hash from 'object-hash';
+import { get, set } from 'lodash';
 
 import PivotGriddleHeader from './PivotGriddleHeader';
 import PivotGriddleRow from './PivotGriddleRow';
@@ -79,7 +80,6 @@ class PivotGriddleTable extends Component {
    */
   checkPosition() {
     if (this._table === null || this.newTable === null) return;
-
     const { fixedHeadOffset, elementScroll } = this.props;
     let element = false;
 
@@ -94,6 +94,8 @@ class PivotGriddleTable extends Component {
       if (tablePos.top - elementTop < fixedHeadOffset) {
         this.newTable.style.left = `${tablePos.left}px`;
         this.newTable.style.top = `${elementTop + fixedHeadOffset}px`;
+      } else {
+        this.newTable.style.left = '-9999px';
       }
     } else if (tablePos.top < fixedHeadOffset) {
       this.newTable.style.left = `${tablePos.left}px`;
@@ -227,46 +229,48 @@ class PivotGriddleTable extends Component {
     return component;
   }
 
+  calcRow(prev, curr) {
+    const next = {
+      ...prev,
+    };
+    if (curr === null) return next;
+    if (!next.count) next.count = 0;
+    if (!next.sum) next.sum = 0;
+    next.count += 1;
+    next.sum = parseInt(next.sum, 10) + parseInt(curr, 10);
+    next.min = next.min < curr ? next.min : curr;
+    next.max = next.max > curr ? next.max : curr;
+    return next;
+  }
+
+  calculateRows(row, columns, path = [], data = {}, depth = 1) {
+    columns.forEach((col) => {
+      if (col.children) {
+        this.calculateRows(row, col.children, [...path, col.column], data, depth + 1);
+      } else {
+        const fullPath = [...path, col.column];
+        const prevData = get(data, fullPath, {});
+        const nextData = get(row, fullPath, null);
+        set(data, fullPath, this.calcRow(prevData, nextData));
+      }
+    });
+    return data;
+  }
+
   createRows() {
     const { renderColumns, groupBy, groupSettings, columns } = this.props;
     const { rows } = this.state;
     if (rows.length <= 0) return false;
     const getRowKey = false;
-    const group = groupBy && groupBy !== '' ? groupBy : false;
     const renderer = [];
-    const calcCol = renderColumns.filter(col => !!col.calculation && col.column !== group);
-    const calc = (prev, curr) => {
-      const next = {
-        ...prev,
-      };
-      if (!next.count) next.count = 0;
-      if (!next.sum) next.sum = 0;
-      next.count += 1;
-      next.sum = parseInt(next.sum, 10) + parseInt(curr, 10);
-      next.min = next.min < curr ? next.min : curr;
-      next.max = next.max > curr ? next.max : curr;
-      return next;
-    };
     rows.forEach((row) => {
       const grouping = groupBy && row.children;
       const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${hash(row)}`;
       let key = baseKey;
       if (grouping) {
         const groupRows = [];
+        const renderChildRows = [];
         let totals;
-        if (calcCol.length >= 1 && renderColumns.length > 1) {
-          totals = {};
-          totals[groupBy] = groupSettings.totalText;
-          totals = row.children.reduce((prev, curr) => {
-            const next = {
-              ...prev,
-            };
-            calcCol.forEach((col) => {
-              next[col.column] = calc(prev[col.column], curr[col.column]);
-            });
-            return next;
-          }, totals);
-        }
         let childColumns;
         let childRows = [];
         if (groupSettings.type === 'column') {
@@ -284,25 +288,36 @@ class PivotGriddleTable extends Component {
           if (totals) totals[childColumns[0].column] = groupSettings.totalText;
           const rowSpan = 0;
           childRows = [...row.children];
-          const colSpan = childColumns.length;
+          const colSpan = gost.object.getColSpan({ children: childColumns });
           groupRows.push(this.renderRow(firstRow, firstRowColumns, key, rowSpan, false, false, colSpan));
         }
-        if (groupSettings.totalPosition === 'top' && groupSettings.type === 'row') {
-          if (totals) {
-            key = `${baseKey}-total`;
-            groupRows.push(this.renderRow(totals, renderColumns, key, false, false, true));
+        if (childRows.length >= 1) {
+          totals = {};
+          childRows.forEach((childRow) => {
+            key = `${baseKey}-c-${hash(childRow)}`;
+            renderChildRows.push(this.renderRow(childRow, childColumns, key, false));
+            if (childColumns.length > 1) {
+              totals = Object.assign(totals, this.calculateRows(childRow, childColumns, [], totals));
+            }
+          });
+          if (groupSettings.type === 'row') {
+            totals[childColumns[0].column] = groupSettings.totalText;
+          } else {
+            totals[groupBy] = groupSettings.totalText;
           }
         }
-        childRows.forEach((childRow) => {
-          key = `${baseKey}-c-${hash(childRow)}`;
-          groupRows.push(this.renderRow(childRow, childColumns, key, false));
-        });
-        if ((groupSettings.totalPosition === 'bottom' && groupSettings.type === 'row') || groupSettings.type === 'column') {
-          if (totals) {
-            key = `${baseKey}-total`;
-            groupRows.push(this.renderRow(totals, renderColumns, key, false, false, true));
+        if (groupSettings.type === 'row' && totals) {
+          key = `${baseKey}-total`;
+          if (groupSettings.totalPosition === 'top') {
+            renderChildRows.unshift(this.renderRow(totals, renderColumns, key, false, false, true));
+          } else if (groupSettings.totalPosition === 'bottom') {
+            renderChildRows.push(this.renderRow(totals, renderColumns, key, false, false, true));
           }
+        } else if (groupSettings.type === 'column' && totals) {
+          key = `${baseKey}-total`;
+          renderChildRows.push(this.renderRow(totals, renderColumns, key, false, false, true));
         }
+        groupRows.push(renderChildRows);
         renderer.push(<tbody key={`${baseKey}-tbody`}>{groupRows}</tbody>);
       } else if (groupBy) {
         const groupingColumns = renderColumns.filter(item => item.column !== groupBy);
@@ -383,6 +398,7 @@ PivotGriddleTable.propTypes = {
     PropTypes.bool,
   ]).isRequired,
   renderColumns: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired,
   rowMetadata: PropTypes.oneOfType([
     PropTypes.bool,
     PropTypes.object,
@@ -390,6 +406,10 @@ PivotGriddleTable.propTypes = {
   rowCollapsedComponent: PropTypes.any.isRequired,
   rowExpandedComponent: PropTypes.any.isRequired,
   groupSettings: PropTypes.object.isRequired,
+  elementScroll: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.string,
+  ]).isRequired,
 };
 
 export default PivotGriddleTable;

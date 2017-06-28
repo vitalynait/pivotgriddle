@@ -23,6 +23,10 @@ body {
   top: 0px;
   margin-top: 0px;
 }
+.fixed_box {
+  height: 300px;
+  overflow-y: auto;
+}
 .ui.table.grouping.grouping-row {
   tbody {
     tr:nth-child(1) {
