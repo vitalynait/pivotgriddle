@@ -24,6 +24,8 @@ const Basic = () => (
     customTableClass="ui table celled"
     paginationSettings={paginationSettings}
     findRowColumns
+    sortBy="first_name"
+    sortDir="desc"
   />
 );
 
