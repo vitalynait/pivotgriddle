@@ -49,7 +49,7 @@ const options = [
   },
 ];
 
-const gridSettings = {
+const groupSettings = {
   totalPosition: 'bottom',
   totalText: 'Всего:',
   type: 'column',
@@ -88,7 +88,7 @@ class GroupRowColumn extends Component {
           paginationSettings={paginationSettings}
           findRowColumns
           pageSize={5}
-          gridSettings={gridSettings}
+          groupSettings={groupSettings}
         />
       </div>
     );

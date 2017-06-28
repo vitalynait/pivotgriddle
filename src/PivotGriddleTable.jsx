@@ -254,7 +254,7 @@ class PivotGriddleTable extends Component {
       if (grouping) {
         const groupRows = [];
         let totals;
-        if (calcCol.length >= 1) {
+        if (calcCol.length >= 1 && renderColumns.length > 1) {
           totals = {};
           totals[groupBy] = groupSettings.totalText;
           totals = row.children.reduce((prev, curr) => {

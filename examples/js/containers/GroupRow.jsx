@@ -9,6 +9,7 @@ const columns = [
   {
     column: 'country',
     displayName: 'Страна',
+    calculation: 'min',
   },
   {
     column: 'type',
@@ -84,7 +85,7 @@ const data = [
   },
 ];
 
-const gridSettings = {
+const groupSettings = {
   totalPosition: 'bottom',
   totalText: 'Всего:',
   type: 'row',
@@ -122,7 +123,7 @@ class GroupRow extends Component {
           groupBy={this.state.groupBy}
           customTableClass="ui table celled structured"
           paginationSettings={paginationSettings}
-          gridSettings={gridSettings}
+          groupSettings={groupSettings}
         />
       </div>
     );
