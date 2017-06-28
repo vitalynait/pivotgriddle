@@ -44,5 +44,25 @@ body {
     }
   }
 }
+.space-wrap {
+  white-space: initial !important;
+  * {
+    white-space: initial !important;
+  }
+}
+.small-table {
+  .ui.table {
+    font-size: 12px !important;
+    thead th {
+      padding: 0.3em !important;
+      white-space: initial !important;
+    }
+  }
+}
+.table-head-center {
+  th {
+    text-align: center !important;
+  }
+}
 
 @import "./semantic.scss";

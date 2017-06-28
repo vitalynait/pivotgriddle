@@ -6,7 +6,7 @@ import paginationSettings from '../data/pagination.config';
 
 const TemplateEmail = ({ data }) => <a href={`mailto:${data}`}>{data}</a>;
 
-const ValueComponent = ({ rowData }) = <div>{rowData.email}</div>;
+const ValueComponent = ({ rowData }) => <div>{rowData.email}</div>;
 
 const columns = [
   {

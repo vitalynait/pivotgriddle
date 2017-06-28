@@ -216,7 +216,7 @@ class PivotGriddleTable extends Component {
       rowCollapsedComponent: this.props.rowCollapsedComponent,
       rowExpandedComponent: this.props.rowExpandedComponent,
     };
-    if (rowMetadata && rowMetadata.templateRow) {
+    if (rowMetadata.templateRow) {
       if (rowMetadata.templateRow.prototype instanceof React.Component) {
         const { templateRow } = rowMetadata;
         component = <templateRow {...props} />;
@@ -230,6 +230,8 @@ class PivotGriddleTable extends Component {
   }
 
   calcRow(prev, curr) {
+    const fixed = this.props.rowMetadata.fixedNum || 0;
+    const del = 10 ** fixed || 10;
     const next = {
       ...prev,
     };
@@ -237,7 +239,10 @@ class PivotGriddleTable extends Component {
     if (!next.count) next.count = 0;
     if (!next.sum) next.sum = 0;
     next.count += 1;
-    next.sum = parseInt(next.sum, 10) + parseInt(curr, 10);
+    const oldSum = parseFloat(next.sum, 10) * del;
+    const currValue = parseFloat(curr, 10) * del;
+    let newSum = ((oldSum + currValue) / del).toFixed(fixed);
+    next.sum = newSum;
     next.min = next.min < curr ? next.min : curr;
     next.max = next.max > curr ? next.max : curr;
     return next;
@@ -334,7 +339,7 @@ class PivotGriddleTable extends Component {
   render() {
     const rows = this.createRows();
     const { renderColumns, rowMetadata, groupBy, depthChildrenKey, groupSettings } = this.props;
-    const headerClassName = rowMetadata && rowMetadata.headerCssClassName ? rowMetadata.headerCssClassName : '';
+    const headerClassName = rowMetadata.headerCssClassName ? rowMetadata.headerCssClassName : '';
     const wrapTbody = !depthChildrenKey && !groupBy;
     return (
       <table
@@ -399,10 +404,7 @@ PivotGriddleTable.propTypes = {
   ]).isRequired,
   renderColumns: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
-  rowMetadata: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.object,
-  ]).isRequired,
+  rowMetadata: PropTypes.object.isRequired,
   rowCollapsedComponent: PropTypes.any.isRequired,
   rowExpandedComponent: PropTypes.any.isRequired,
   groupSettings: PropTypes.object.isRequired,

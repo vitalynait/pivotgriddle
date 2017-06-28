@@ -7,7 +7,8 @@
     "lint": "eslint --ext .jsx --ext .js src",
     "start": "gulp example-server",
     "build": "gulp",
-    "precommit": "npm run build && git add lib"
+    "precommit": "npm run build && git add lib",
+    "site": "cross-env NODE_ENV=production webpack --config webpack/webpack.site.config.js"
   },
   "pre-commit": "precommit",
   "keywords": [
@@ -67,7 +68,7 @@
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-react": "^7.1.0",
-    "extract-text-webpack-plugin": "^2.1.0",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.11.2",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",

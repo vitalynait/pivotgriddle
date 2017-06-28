@@ -7,11 +7,13 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
 const exampleConfig = require('./webpack/webpack.example.config');
+const buildConfig = require('./webpack/webpack.site.config');
 const appConfig = require('./webpack/config');
 
 gulp.task('default', ['prod']);
 
 gulp.task('clean', () => del(['./dist/*', './lib/**']));
+gulp.task('clean-site', () => del(['./site/src/*']));
 
 //-------------
 // PRODUCTION
@@ -56,5 +58,14 @@ gulp.task('example-server', () => {
     }
 
     console.log(`Listening at localhost:${appConfig.port}`);
+  });
+});
+
+gulp.task('site', ['clean-site'], () => {
+  webpack(buildConfig, (error, stats) => {
+    if (error) console.log('isset error');
+    if (stats) {
+      console.log('complete');
+    }
   });
 });

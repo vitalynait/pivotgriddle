@@ -66,7 +66,7 @@ class PivotGriddleRow extends Component {
     if (child) classes = 'childrow';
     if (totalRow) classes = `${classes} totalRow`;
     let customClassName;
-    if (rowMetadata && rowMetadata.bodyCssClassName) {
+    if (rowMetadata.bodyCssClassName) {
       if (typeof rowMetadata.bodyCssClassName === 'function') {
         customClassName = rowMetadata.bodyCssClassName(row);
       } else {
@@ -114,7 +114,7 @@ class PivotGriddleRow extends Component {
     }
     let classes = 'firstRow';
     let customClassName;
-    if (rowMetadata && rowMetadata.bodyCssClassName) {
+    if (rowMetadata.bodyCssClassName) {
       if (typeof rowMetadata.bodyCssClassName === 'function') {
         customClassName = rowMetadata.bodyCssClassName(row);
       } else {
@@ -250,10 +250,7 @@ PivotGriddleRow.propTypes = {
   ]).isRequired,
   wrapping: PropTypes.bool.isRequired,
   totalRow: PropTypes.bool.isRequired,
-  rowMetadata: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.object,
-  ]).isRequired,
+  rowMetadata: PropTypes.object.isRequired,
   rowCollapsedComponent: PropTypes.any.isRequired,
   rowExpandedComponent: PropTypes.any.isRequired,
 };

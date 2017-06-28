@@ -77,4 +77,83 @@ const data = [
   },
 ];
 
-export default data;
+const newData = [
+  {
+    area: 'Сахалинская область',
+    product: 'Уголь,тыс.т',
+    total: 5446,
+    total_group: {
+      big: {
+        big_total: 4643,
+        inner: {
+          middle: 444,
+          middle_small: 0,
+        },
+      },
+      small: {
+        small_total: 803,
+        inner: 28,
+      },
+      ip: 0,
+    },
+  },
+  {
+    area: 'Сахалинская область',
+    product: 'Каменный уголь,тыс.т',
+    total: 1147,
+    total_group: {
+      big: {
+        big_total: 992,
+        inner: {
+          middle: 0,
+          middle_small: 0,
+        },
+      },
+      small: {
+        small_total: 155,
+        inner: 28,
+      },
+      ip: 0,
+    },
+  },
+  {
+    area: 'Сахалинская область',
+    product: 'Уголь,за исключением антрацита, угля коксующегося и угля бурого,тыс.т',
+    total: 1147,
+    total_group: {
+      big: {
+        big_total: 992,
+        inner: {
+          middle: 0,
+          middle_small: 0,
+        },
+      },
+      small: {
+        small_total: 155,
+        inner: 28,
+      },
+      ip: 0,
+    },
+  },
+  {
+    area: 'Сахалинская область',
+    product: 'Уголь бурый,тыс.т',
+    total: 4299,
+    total_group: {
+      big: {
+        big_total: 3651,
+        inner: {
+          middle: 444,
+          middle_small: 0,
+        },
+      },
+      small: {
+        small_total: 648,
+        inner: 0,
+      },
+      ip: 0,
+    },
+  },
+];
+
+export default newData;

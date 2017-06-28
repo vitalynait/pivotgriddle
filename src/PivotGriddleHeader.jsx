@@ -45,6 +45,7 @@ class PivotGriddleHeader extends Component {
         $$hash: hashKey,
       };
       if (node.width) item.width = node.width;
+      if (node.style) item.style = node.style;
       if (!this.tableParse[idx]) {
         this.tableParse[idx] = [];
       }
@@ -79,7 +80,6 @@ class PivotGriddleHeader extends Component {
       elRules.onClick = () => this.props.onSortChange(col.column);
     }
     const key = `th-${rowKey}-${col.$$hash}`;
-
     const ccol = (
       <th
         rowSpan={col.rowSpan > 1 ? col.rowSpan : null}
@@ -87,6 +87,7 @@ class PivotGriddleHeader extends Component {
         className={classRules}
         key={key}
         width={col.width ? col.width : null}
+        style={col.style ? col.style : null}
         {
           ...elRules
         }

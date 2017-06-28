@@ -17,15 +17,15 @@ const columns = [
     displayName: 'Откуда данные',
   },
   {
+    column: 2014,
+    calculation: 'sum',
+  },
+  {
     column: 2015,
     calculation: 'sum',
   },
   {
     column: 2016,
-    calculation: 'sum',
-  },
-  {
-    column: 2017,
     calculation: 'sum',
   },
 ];
@@ -54,52 +54,86 @@ const optionsTest = [
 
 const data = [
   {
-    country: 'Россия',
+    country: 'Азербайджан',
     type: 'Импорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
+    2014: 0,
+    2015: '0.2',
+    2016: '45.1',
   },
   {
-    country: 'Россия',
-    type: 'Экспорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
-  },
-  {
-    country: 'Украина',
+    country: 'Беларусь',
     type: 'Импорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
-  },
-  {
-    country: 'Украина',
-    type: 'Экспорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
+    2014: 0,
+    2015: '4297.0',
+    2016: '6535.1',
   },
   {
     country: 'Казахстан',
     type: 'Импорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
+    2014: 0,
+    2015: '358.0',
+    2016: '134.9',
+  },
+  {
+    country: 'Узбекистан',
+    type: 'Импорт',
+    2014: 0,
+    2015: '297.0',
+    2016: 0,
+  },
+  {
+    country: 'Украина',
+    type: 'Импорт',
+    2014: '6324.0',
+    2015: 0,
+    2016: '6.1',
+  },
+  {
+    country: 'Азербайджан',
+    type: 'Экспорт',
+    2014: '75.0',
+    2015: '353.0',
+    2016: '96.4',
+  },
+  {
+    country: 'Беларусь',
+    type: 'Экспорт',
+    2014: 0,
+    2015: '84.0',
+    2016: 0,
   },
   {
     country: 'Казахстан',
     type: 'Экспорт',
-    2015: 13534,
-    2016: 234,
-    2017: 3634,
+    2014: 0,
+    2015: '650.0',
+    2016: '142.8',
+  },
+  {
+    country: 'Таджикистан',
+    type: 'Экспорт',
+    2014: 0,
+    2015: '5.0',
+    2016: '10.4',
+  },
+  {
+    country: 'Туркмения',
+    type: 'Экспорт',
+    2014: '4.0',
+    2015: '23.0',
+    2016: '161.8',
   },
 ];
 
 const groupSettings = {
-  totalPosition: 'bottom',
+  totalPosition: 'top',
   totalText: 'Всего:',
+  type: 'row',
+};
+
+const groupSettingsSecond = {
+  totalPosition: 'bottom',
+  totalText: 'ИТОГО:',
   type: 'row',
 };
 
@@ -114,34 +148,34 @@ const columnsTest = [
   },
   {
     column: 'total',
-    displayName: 'Произведено-всего',
+    displayName: 'Произведено - всего',
     calculation: 'sum',
   },
   {
     column: 'total_group',
-    displayName: 'из общего объема',
+    displayName: 'из общего объема производства произведено',
     children: [
       {
         column: 'big',
-        displayName: 'Крупными и средними',
+        displayName: 'крупными и средними организациями (включая организации, средняя численность работников которых не превышает 15 человек, не являющиеся',
         children: [
           {
             column: 'big_total',
-            displayName: 'Всего',
+            displayName: 'всего',
             calculation: 'sum',
           },
           {
             column: 'inner',
-            displayName: 'В том числе',
+            displayName: 'в том числе',
             children: [
               {
                 column: 'middle',
-                displayName: 'Средними',
+                displayName: 'средними организациями',
                 calculation: 'sum',
               },
               {
                 column: 'middle_small',
-                displayName: 'Средними маленькими',
+                displayName: 'организациями, средняя численность работников которых не превышает 15 человек, не являющимися субъектами малого предпринимательства',
                 calculation: 'sum',
               },
             ],
@@ -150,28 +184,32 @@ const columnsTest = [
       },
       {
         column: 'small',
-        displayName: 'Малыми',
+        displayName: 'малыми предприятиями (включая микропредприятия)',
         children: [
           {
             column: 'small_total',
-            displayName: 'Всего',
+            displayName: 'всего',
             calculation: 'sum',
           },
           {
             column: 'inner',
-            displayName: 'В том числе микро',
+            displayName: 'в том числе микропредприятиями',
             calculation: 'sum',
           },
         ],
       },
       {
         column: 'ip',
-        displayName: 'ИП',
+        displayName: 'индивидуальными предпринимателями',
         calculation: 'sum',
       },
     ],
   },
 ];
+
+const metaRow = {
+  fixedNum: 1,
+};
 
 class GroupRow extends Component {
   constructor(props) {
@@ -217,26 +255,29 @@ class GroupRow extends Component {
           groupSettings={groupSettings}
           pageSize={10}
         />
-        <h2>Второй скриншот (вложенное ИТОГО)</h2>
-        <label>
-          Группировать по:
-          <Select
-            onChange={this.onSelectChangeTest}
-            value={this.state.groupByTest}
-            options={optionsTest}
+        <div className="space-wrap small-table table-head-center">
+          <h2>Второй скриншот (вложенное ИТОГО)</h2>
+          <label>
+            Группировать по:
+            <Select
+              onChange={this.onSelectChangeTest}
+              value={this.state.groupByTest}
+              options={optionsTest}
+            />
+          </label>
+          <br />
+          <PivotGriddle
+            columns={columnsTest}
+            rows={dataTest}
+            simplePagination
+            groupBy={this.state.groupByTest}
+            customTableClass="ui table celled structured"
+            paginationSettings={paginationSettings}
+            groupSettings={groupSettingsSecond}
+            pageSize={10}
+            rowMetadata={metaRow}
           />
-        </label>
-        <br />
-        <PivotGriddle
-          columns={columnsTest}
-          rows={dataTest}
-          simplePagination
-          groupBy={this.state.groupByTest}
-          customTableClass="ui table celled structured"
-          paginationSettings={paginationSettings}
-          groupSettings={groupSettings}
-          pageSize={10}
-        />
+        </div>
       </div>
     );
   }

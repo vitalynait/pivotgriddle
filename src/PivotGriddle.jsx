@@ -30,6 +30,10 @@ const defaultGroupSettings = {
   totalText: 'ИТОГО:',
 };
 
+const defaultRowMeta = {
+  fixedNum: false,
+};
+
 class PivotGriddle extends Component {
   static propTypes = {
     page: PropTypes.number,
@@ -65,10 +69,7 @@ class PivotGriddle extends Component {
       PropTypes.number,
     ]),
     findRowColumns: PropTypes.bool,
-    rowMetadata: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.object,
-    ]),
+    rowMetadata: PropTypes.object,
     sortBy: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.string,
@@ -99,7 +100,7 @@ class PivotGriddle extends Component {
     infinityScroll: false,
     maxItems: false,
     findRowColumns: false,
-    rowMetadata: false,
+    rowMetadata: {},
     sortDir: 'asc',
     sortBy: false,
     paginationSettings: {},
@@ -114,6 +115,7 @@ class PivotGriddle extends Component {
 
     const pag = Object.assign(defaultPaginationSettings, props.paginationSettings);
     const grid = Object.assign(defaultGroupSettings, props.groupSettings);
+    const rowMeta = Object.assign(defaultRowMeta, props.rowMetadata);
 
     this.state = {
       groupBySort: 'asc',
@@ -126,6 +128,7 @@ class PivotGriddle extends Component {
       loading: false,
       paginationSettings: pag,
       groupSettings: grid,
+      rowMetadata: rowMeta,
     };
 
     this.getRenderColumns = this.getRenderColumns.bind(this);
@@ -450,7 +453,7 @@ class PivotGriddle extends Component {
           fixedTableHead={fixedTableHead}
           fixedHeadOffset={this.props.fixedHeadOffset}
           fixedHeadClass={this.props.fixedHeadClass}
-          rowMetadata={this.props.rowMetadata}
+          rowMetadata={this.state.rowMetadata}
           elementScroll={this.props.elementScroll}
           rowExpandedComponent={this.props.rowExpandedComponent}
           rowCollapsedComponent={this.props.rowCollapsedComponent}
