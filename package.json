@@ -9,6 +9,7 @@
     "build": "gulp",
     "precommit": "npm run build && git add lib"
   },
+  "pre-commit": "precommit",
   "keywords": [
     "react",
     "pivot",
