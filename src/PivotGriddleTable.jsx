@@ -228,7 +228,7 @@ class PivotGriddleTable extends Component {
   }
 
   createRows() {
-    const { renderColumns, groupBy, gridSettings, columns } = this.props;
+    const { renderColumns, groupBy, groupSettings, columns } = this.props;
     const { rows } = this.state;
     if (rows.length <= 0) return false;
     const getRowKey = false;
@@ -256,7 +256,7 @@ class PivotGriddleTable extends Component {
         let totals;
         if (calcCol.length >= 1) {
           totals = {};
-          totals[groupBy] = gridSettings.totalText;
+          totals[groupBy] = groupSettings.totalText;
           totals = row.children.reduce((prev, curr) => {
             const next = {
               ...prev,
@@ -269,25 +269,25 @@ class PivotGriddleTable extends Component {
         }
         let childColumns;
         let childRows = [];
-        if (gridSettings.type === 'column') {
+        if (groupSettings.type === 'column') {
           const firstRow = row.children[0];
           childColumns = renderColumns.filter(item => item.column !== groupBy);
           firstRow[groupBy] = row[groupBy];
           const rowSpan = row.children.length;
           childRows = [...row.children.slice(1)];
           groupRows.push(this.renderRow(firstRow, renderColumns, key, rowSpan));
-        } else if (gridSettings.type === 'row') {
+        } else if (groupSettings.type === 'row') {
           const firstRow = {};
           childColumns = renderColumns.filter(item => item.column !== groupBy);
           firstRow[groupBy] = row[groupBy];
           const firstRowColumns = columns.filter(item => item.column === groupBy);
-          if (totals) totals[childColumns[0].column] = gridSettings.totalText;
+          if (totals) totals[childColumns[0].column] = groupSettings.totalText;
           const rowSpan = 0;
           childRows = [...row.children];
           const colSpan = childColumns.length;
           groupRows.push(this.renderRow(firstRow, firstRowColumns, key, rowSpan, false, false, colSpan));
         }
-        if (gridSettings.totalPosition === 'top' && gridSettings.type === 'row') {
+        if (groupSettings.totalPosition === 'top' && groupSettings.type === 'row') {
           if (totals) {
             key = `${baseKey}-total`;
             groupRows.push(this.renderRow(totals, renderColumns, key, false, false, true));
@@ -297,7 +297,7 @@ class PivotGriddleTable extends Component {
           key = `${baseKey}-c-${hash(childRow)}`;
           groupRows.push(this.renderRow(childRow, childColumns, key, false));
         });
-        if ((gridSettings.totalPosition === 'bottom' && gridSettings.type === 'row') || gridSettings.type === 'column') {
+        if ((groupSettings.totalPosition === 'bottom' && groupSettings.type === 'row') || groupSettings.type === 'column') {
           if (totals) {
             key = `${baseKey}-total`;
             groupRows.push(this.renderRow(totals, renderColumns, key, false, false, true));
@@ -318,13 +318,13 @@ class PivotGriddleTable extends Component {
 
   render() {
     const rows = this.createRows();
-    const { renderColumns, rowMetadata, groupBy, depthChildrenKey, gridSettings } = this.props;
+    const { renderColumns, rowMetadata, groupBy, depthChildrenKey, groupSettings } = this.props;
     const headerClassName = rowMetadata && rowMetadata.headerCssClassName ? rowMetadata.headerCssClassName : '';
     const wrapTbody = !depthChildrenKey && !groupBy;
     return (
       <table
         ref={(el) => { this._table = el; }}
-        className={`sortable ${this.props.customTableClass}${groupBy && groupBy !== '' ? ' grouping' : ''}${groupBy && groupBy !== '' ? ` grouping-${gridSettings.type}` : ''}`}
+        className={`sortable ${this.props.customTableClass}${groupBy && groupBy !== '' ? ' grouping' : ''}${groupBy && groupBy !== '' ? ` grouping-${groupSettings.type}` : ''}`}
       >
         <PivotGriddleHeader
           columns={renderColumns}
@@ -389,6 +389,7 @@ PivotGriddleTable.propTypes = {
   ]).isRequired,
   rowCollapsedComponent: PropTypes.any.isRequired,
   rowExpandedComponent: PropTypes.any.isRequired,
+  groupSettings: PropTypes.object.isRequired,
 };
 
 export default PivotGriddleTable;

@@ -24,7 +24,7 @@ const defaultPaginationSettings = {
   viewPages: 5,
 };
 
-const defaultGridSettings = {
+const defaultGroupSettings = {
   type: 'column',
   totalPosition: 'bottom',
   totalText: 'ИТОГО:',
@@ -77,7 +77,7 @@ class PivotGriddle extends Component {
     elementScroll: PropTypes.string,
     rowCollapsedComponent: PropTypes.any,
     rowExpandedComponent: PropTypes.any,
-    gridSettings: PropTypes.object,
+    groupSettings: PropTypes.object,
   }
 
   static defaultProps = {
@@ -106,14 +106,14 @@ class PivotGriddle extends Component {
     elementScroll: '',
     rowCollapsedComponent: <span>+</span>,
     rowExpandedComponent: <span>-</span>,
-    gridSettings: {},
+    groupSettings: {},
   }
 
   constructor(props) {
     super(props);
 
     const pag = Object.assign(defaultPaginationSettings, props.paginationSettings);
-    const grid = Object.assign(defaultGridSettings, props.gridSettings);
+    const grid = Object.assign(defaultGroupSettings, props.groupSettings);
 
     this.state = {
       groupBySort: 'asc',
@@ -125,7 +125,7 @@ class PivotGriddle extends Component {
       maxItems: props.maxItems,
       loading: false,
       paginationSettings: pag,
-      gridSettings: grid,
+      groupSettings: grid,
     };
 
     this.getRenderColumns = this.getRenderColumns.bind(this);
@@ -158,7 +158,7 @@ class PivotGriddle extends Component {
     if (nextProps.page && nextProps.page !== this.state.currentPage) state.currentPage = nextProps.page;
     if (nextProps.pageSize !== this.state.pageSize) state.pageSize = nextProps.pageSize ? nextProps.pageSize : 20;
     state.paginationSettings = Object.assign(defaultPaginationSettings, nextProps.paginationSettings);
-    state.gridSettings = Object.assign(defaultGridSettings, nextProps.gridSettings);
+    state.groupSettings = Object.assign(defaultGroupSettings, nextProps.groupSettings);
     this.setState({
       ...state,
     });
@@ -228,7 +228,7 @@ class PivotGriddle extends Component {
   }
 
   getRenderColumns() {
-    const { columns, hiddenColumns, groupChildrenKey, groupBy, depthChildrenKey, findRowColumns, gridSettings } = this.props;
+    const { columns, hiddenColumns, groupChildrenKey, groupBy, depthChildrenKey, findRowColumns, groupSettings } = this.props;
     const { rows } = this.state;
     const removableColumns = columns.filter(col => hiddenColumns.indexOf(col.column) === -1);
     const getColumns = (row, iArr = []) => {
@@ -325,7 +325,7 @@ class PivotGriddle extends Component {
     removableColumns.forEach((item) => {
       renderColumns.push(item);
     });
-    if (groupBy && gridSettings.type === 'row') {
+    if (groupBy && groupSettings.type === 'row') {
       renderColumns = renderColumns.filter(item => item.column !== groupBy);
     }
     return renderColumns;
@@ -454,7 +454,7 @@ class PivotGriddle extends Component {
           elementScroll={this.props.elementScroll}
           rowExpandedComponent={this.props.rowExpandedComponent}
           rowCollapsedComponent={this.props.rowCollapsedComponent}
-          gridSettings={this.state.gridSettings}
+          groupSettings={this.state.groupSettings}
         />
         {
           needScroll &&
