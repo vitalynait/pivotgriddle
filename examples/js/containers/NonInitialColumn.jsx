@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/basic';
@@ -29,19 +29,15 @@ const columns = [
   },
 ];
 
-class NonInitialColumn extends Component {
-  render() {
-    return (
-      <PivotGriddle
-        columns={columns}
-        rows={data.rows}
-        simplePagination
-        customTableClass="ui table"
-        paginationSettings={paginationSettings}
-        findRowColumns
-      />
-    );
-  }
-}
+const NonInitialColumn = () => (
+  <PivotGriddle
+    columns={columns}
+    rows={data.rows}
+    simplePagination
+    customTableClass="ui table"
+    paginationSettings={paginationSettings}
+    findRowColumns
+  />
+);
 
 export default NonInitialColumn;

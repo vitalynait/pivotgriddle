@@ -263,9 +263,9 @@ class PivotGriddleTable extends Component {
     if (rows.length <= 0) return false;
     const getRowKey = false;
     const renderer = [];
-    rows.forEach((row) => {
+    rows.forEach((row, idx) => {
       const grouping = groupBy && row.children;
-      const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${hash(row)}`;
+      const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${hash({ row, idx })}`;
       let key = baseKey;
       if (grouping) {
         const groupRows = [];

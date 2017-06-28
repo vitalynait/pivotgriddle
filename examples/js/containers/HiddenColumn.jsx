@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PivotGriddle from 'pivot-griddle';
 
 import data from '../data/basic';
@@ -17,28 +17,24 @@ const columns = [
 ];
 const hiddenColumns = ['last_name', 'email', 'gender'];
 
-class HiddenColumn extends Component {
-  render() {
-    return (
-      <div>
-        <ul>
-          Hidden columns:
-          <li>last_name - Фамилия</li>
-          <li>email - Эл. почта</li>
-          <li>gender - Пол</li>
-        </ul>
-        <PivotGriddle
-          columns={columns}
-          rows={data.rows}
-          simplePagination
-          hiddenColumns={hiddenColumns}
-          customTableClass="ui table celled"
-          paginationSettings={paginationSettings}
-          findRowColumns
-        />
-      </div>
-    );
-  }
-}
+const HiddenColumn = () => (
+  <div>
+    <ul>
+      Hidden columns:
+      <li>last_name - Фамилия</li>
+      <li>email - Эл. почта</li>
+      <li>gender - Пол</li>
+    </ul>
+    <PivotGriddle
+      columns={columns}
+      rows={data.rows}
+      simplePagination
+      hiddenColumns={hiddenColumns}
+      customTableClass="ui table celled"
+      paginationSettings={paginationSettings}
+      findRowColumns
+    />
+  </div>
+);
 
 export default HiddenColumn;
