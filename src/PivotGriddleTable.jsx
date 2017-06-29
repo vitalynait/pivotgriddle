@@ -263,14 +263,14 @@ class PivotGriddleTable extends Component {
   }
 
   createRows() {
-    const { renderColumns, groupBy, groupSettings, columns } = this.props;
+    const { renderColumns, groupBy, groupSettings, columns, rowMetadata } = this.props;
     const { rows } = this.state;
     if (rows.length <= 0) return false;
-    const getRowKey = false;
+    const { getRowKey } = rowMetadata;
     const renderer = [];
     rows.forEach((row, idx) => {
       const grouping = groupBy && row.children;
-      const baseKey = getRowKey && row[getRowKey] ? row[getRowKey] : `row-${hash({ row, idx })}`;
+      const baseKey = (getRowKey && getRowKey(row)) || `row-${hash({ row, idx })}`;
       let key = baseKey;
       if (grouping) {
         const groupRows = [];
