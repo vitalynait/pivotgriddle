@@ -36,13 +36,11 @@ module.exports = {
       },
       {
         test: /\.s?css$/,
-        loader: ExtractTextPlugin.extract(
-          'style',
-          'css-loader?sourceMap&modules&importLoaders=1&localIdentName=[local]!resolve-url!sass-loader?sourceMap',
-          {
-            publicPath: '/', // Prepends 'url' paths in CSS output files
-          }
-        ),
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader?sourceMap&modules&importLoaders=1&localIdentName=[local]!resolve-url!sass-loader?sourceMap',
+          publicPath: '/', // Prepends 'url' paths in CSS output files
+        }),
       },
     ],
   },
@@ -54,7 +52,8 @@ module.exports = {
         warnings: false,
       },
     }),
-    new ExtractTextPlugin('css/[name].css?[hash]-[chunkHash]', {
+    new ExtractTextPlugin({
+      filename: 'css/[name].css?[hash]-[chunkHash]',
       disable: false,
       allChunks: true,
     }),
