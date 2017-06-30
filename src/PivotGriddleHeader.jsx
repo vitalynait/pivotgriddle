@@ -70,7 +70,7 @@ class PivotGriddleHeader extends Component {
     let classRules = '';
     const elRules = {};
     const isGroup = col.column === groupBy;
-    const isSorting = (!!sortDir && col.column === sortBy) || (!!groupBySort && isGroup);
+    const isSorting = (!!sortDir && (col.column === sortBy || (col.sortKey && col.sortKey === sortBy))) || (!!groupBySort && isGroup);
     const currentSort = isGroup ? groupBySort : sortDir;
     const thDir = isSorting ? currentSort : false;
     if (thDir) {
