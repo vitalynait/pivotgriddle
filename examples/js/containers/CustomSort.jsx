@@ -4,6 +4,14 @@ import PivotGriddle from 'pivot-griddle';
 import data from '../data/sostav';
 import paginationSettings from '../data/pagination.config';
 
+const cols = [
+  {
+    column: 'gender',
+    displayName: 'Пол',
+    sortKey: 'gender',
+  },
+];
+
 const hiddenColumns = ['age', 'eyeColor', 'isActive', 'index'];
 
 const compareKey = (a, b, key) => {
@@ -75,7 +83,7 @@ class CustomPage extends Component {
           Пагинация силами таблицы
         </p>
         <PivotGriddle
-          columns={[]}
+          columns={cols}
           rows={data}
           hiddenColumns={hiddenColumns}
           customTableClass="ui table celled"

@@ -42,6 +42,7 @@ class PivotGriddleHeader extends Component {
         colSpan: currentColSpan,
         sortable,
         parents: node.parents,
+        sortKey: node.sortKey,
         $$hash: hashKey,
       };
       if (node.width) item.width = node.width;
@@ -77,7 +78,8 @@ class PivotGriddleHeader extends Component {
     }
     if (col.sortable) {
       classRules = `${classRules} onSort`;
-      elRules.onClick = () => this.props.onSortChange(col.column);
+      const sortKey = col.sortKey || col.column;
+      elRules.onClick = () => this.props.onSortChange(sortKey);
     }
     const key = `th-${rowKey}-${col.$$hash}`;
     const ccol = (
