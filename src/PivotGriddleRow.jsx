@@ -109,7 +109,7 @@ class PivotGriddleRow extends Component {
   }
   onShowChildNew(row) {
     row.$$showChild = !row.$$showChild;
-    this.props.onShowChild();
+    this.forceUpdate();
   }
 
   renderRecursiveRow(row, columns) {
@@ -157,7 +157,7 @@ class PivotGriddleRow extends Component {
   }
 
   renderDepthRow(row, columns) {
-    const { depthChildrenKey, rowKey, rowMetadata } = this.props;
+    const { rowKey } = this.props;
     row.$$showChild = row.$$showChild ? row.$$showChild : false;
     const newRows = this.renderManyRow(row, columns);
     const rrow = (

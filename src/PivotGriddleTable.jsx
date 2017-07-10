@@ -21,7 +21,6 @@ class PivotGriddleTable extends Component {
     this.removeFixed = this.removeFixed.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.createRows = this.createRows.bind(this);
-    this.onShowChild = this.onShowChild.bind(this);
 
     this.state = {
       rows: props.rows,
@@ -216,7 +215,6 @@ class PivotGriddleTable extends Component {
       rowMetadata: this.props.rowMetadata,
       rowCollapsedComponent: this.props.rowCollapsedComponent,
       rowExpandedComponent: this.props.rowExpandedComponent,
-      onShowChild: this.onShowChild,
     };
     if (rowMetadata.templateRow) {
       if (rowMetadata.templateRow.prototype instanceof React.Component) {
@@ -262,10 +260,6 @@ class PivotGriddleTable extends Component {
       }
     });
     return data;
-  }
-
-  onShowChild() {
-    this.forceUpdate();
   }
 
   createRows() {
