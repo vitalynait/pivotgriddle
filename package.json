@@ -1,6 +1,6 @@
 {
   "name": "pivot-griddle",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "It's a React Pivot Griddle",
   "main": "./lib/index.js",
   "scripts": {
