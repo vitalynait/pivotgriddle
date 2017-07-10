@@ -28,7 +28,6 @@ class PivotGriddleRow extends Component {
     super(props);
 
     this.state = {
-      showChild: false,
     };
 
     this.onChildShow = this.onChildShow.bind(this);
@@ -38,10 +37,10 @@ class PivotGriddleRow extends Component {
     this.renderCell = this.renderCell.bind(this);
     this.renderTotalCell = this.renderTotalCell.bind(this);
   }
-  onChildShow() {
-    this.setState({
-      showChild: !this.state.showChild,
-    });
+  onChildShow(key) {
+    const state = { ...this.state };
+    state[key] = !this.state[key];
+    this.setState(state);
   }
 
   preRenderCell(col, row, rowData, totalRow, rowSpan, parentRow = false, colSpan) {
@@ -96,22 +95,42 @@ class PivotGriddleRow extends Component {
       </tr>
     );
   }
-  renderShowChild() {
+  renderShowChild(stateKey = 'showChild') {
     const { rowKey } = this.props;
-    const { showChild } = this.state;
-    const element = showChild ? this.props.rowExpandedComponent : this.props.rowCollapsedComponent;
+    const element = this.state[stateKey] ? this.props.rowExpandedComponent : this.props.rowCollapsedComponent;
     const key = `${rowKey}-showChild`;
-    return <td className="systemCell" key={key} onClick={this.onChildShow}>{element}</td>; //eslint-disable-line
+    return <td className="systemCell" key={key} onClick={() => this.onShowChild(stateKey)}>{element}</td>; //eslint-disable-line
+  }
+  renderShowChildNew(row) {
+    const { rowKey } = this.props;
+    const element = row.$$showChild ? this.props.rowExpandedComponent : this.props.rowCollapsedComponent;
+    const key = `${rowKey}-showChild`;
+    return <td className="systemCell" key={key} onClick={() => this.onShowChildNew(row)}>{element}</td>; //eslint-disable-line
+  }
+  onShowChildNew(row) {
+    row.$$showChild = !row.$$showChild;
+    this.props.onShowChild();
   }
 
-  renderDepthRow(row, columns) {
-    const { depthChildrenKey, rowKey, rowMetadata } = this.props;
+  renderRecursiveRow(row, columns) {
+    const rcol = [];
+    columns.map((col) => {
+      if (!col.children && col.column !== 'showChild') {
+        rcol.push(this.renderCell(row, col, false));
+      } else if (col.column === 'showChild') {
+        rcol.push(this.renderShowChildNew(row));
+      } else {
+        const childColumns = col.children;
+        const childData = row[col.column];
+        rcol.push(childColumns.map(ccol => this.renderCell(childData, ccol, false, row)));
+      }
+    });
+    return rcol;
+  }
+
+  renderManyRow(row, columns, rowKey = this.props.rowKey) {
+    const { depthChildrenKey, rowMetadata } = this.props;
     const rows = [];
-    if (this.state.showChild) {
-      row[depthChildrenKey].forEach((child) => {
-        rows.push(this.renderRow(child, columns, false, false, true, `-${hash(child)}`));
-      });
-    }
     let classes = 'firstRow';
     let customClassName;
     if (rowMetadata.bodyCssClassName) {
@@ -122,28 +141,29 @@ class PivotGriddleRow extends Component {
       }
     }
     if (customClassName) classes = classes !== '' ? `${classes} ${customClassName}` : customClassName;
+    row.$$showChild = row.$$showChild ? row.$$showChild : false;
+    rows.push(<tr key={rowKey} className={classes}>{this.renderRecursiveRow(row, columns)}</tr>);
+    if (row.$$showChild) {
+      row[depthChildrenKey].forEach((child) => {
+        const sRowKey = `${rowKey}-${hash(child)}`;
+        if (child[depthChildrenKey] && child[depthChildrenKey].length >= 1) {
+          rows.push(...this.renderManyRow(child, columns, sRowKey));
+        } else {
+          rows.push(this.renderRow(child, columns, false, false, true, sRowKey));
+        }
+      });
+    }
+    return rows;
+  }
+
+  renderDepthRow(row, columns) {
+    const { depthChildrenKey, rowKey, rowMetadata } = this.props;
+    row.$$showChild = row.$$showChild ? row.$$showChild : false;
+    const newRows = this.renderManyRow(row, columns);
     const rrow = (
       <tbody key={`tbody-${rowKey}`}>
-        <tr
-          className={classes}
-          key={rowKey}
-        >
-          {
-            columns.map((col) => {
-              if (!col.children && col.column !== 'showChild') {
-                return this.renderCell(row, col, false);
-              } else if (col.column === 'showChild') {
-                return this.renderShowChild();
-              } else {
-                const childColumns = col.children;
-                const childData = row[col.column];
-                return childColumns.map(ccol => this.renderCell(childData, ccol, false, row));
-              }
-            })
-          }
-        </tr>
         {
-          rows.length >= 1 && rows
+          newRows.length >= 1 && newRows
         }
       </tbody>
     );

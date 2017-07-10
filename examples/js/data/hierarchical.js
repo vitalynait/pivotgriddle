@@ -21,7 +21,21 @@ const data = [
         "friends": {
           "id": 0,
           "name": "Savage Carroll"
-        }
+        },
+        rows: [
+          {
+            "index": 1,
+            "age": 38,
+            "first_name": "Paula",
+            "last_name": "Bishop",
+            "gender": "female",
+            "email": "paulabishop@hivedom.com",
+            "friends": {
+              "id": 1,
+              "name": "Rosanna James"
+            }
+          }
+        ],
       },
       {
         "index": 1,
