@@ -65,4 +65,11 @@ body {
   }
 }
 
+@for $i from 1 through 10 {
+    .firstRow.depth-#{$i} > td,
+    .childrow.depth-#{$i} > td {
+      padding-left: calc(#{$i} * 20px) !important;
+    }
+}
+
 @import "./semantic.scss";

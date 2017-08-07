@@ -46,6 +46,7 @@ class PivotGriddle extends Component {
       PropTypes.bool,
       PropTypes.string,
     ]),
+    depthPadding: PropTypes.number,
     groupBy: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.string,
@@ -87,6 +88,7 @@ class PivotGriddle extends Component {
     rows: [],
     groupChildrenKey: 'children',
     depthChildrenKey: false,
+    depthPadding: 0,
     groupBy: false,
     simplePagination: false,
     pageSize: 20,

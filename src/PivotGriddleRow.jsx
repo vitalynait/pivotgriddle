@@ -58,11 +58,15 @@ class PivotGriddleRow extends Component {
     }
   }
 
-  renderRow(row, columns, rowSpan, totalRow = false, child = false, childKey = '', colSpan = false) {
+  renderRow(row, columns, rowSpan, totalRow = false, child = false, childKey = '', colSpan = false, depth = false) {
     const { rowKey, rowMetadata } = this.props;
     let classes = '';
     const key = `${rowKey}${childKey}`;
     if (child) classes = 'childrow';
+    const addProps = {};
+    if (child && depth) {
+      classes += ` depth-${depth}`;
+    }
     if (totalRow) classes = `${classes} totalRow`;
     let customClassName;
     if (rowMetadata.bodyCssClassName) {
@@ -77,6 +81,7 @@ class PivotGriddleRow extends Component {
       <tr
         className={classes}
         key={key}
+        {...addProps}
       >
         {
           false && columns.map((col) => {
@@ -128,10 +133,13 @@ class PivotGriddleRow extends Component {
     return rcol;
   }
 
-  renderManyRow(row, columns, rowKey = this.props.rowKey) {
+  renderManyRow(row, columns, rowKey = this.props.rowKey, depth = 1) {
     const { depthChildrenKey, rowMetadata } = this.props;
     const rows = [];
     let classes = 'firstRow';
+    if (depth - 1 > 0) {
+      classes += ` depth-${depth - 1}`;
+    }
     let customClassName;
     if (rowMetadata.bodyCssClassName) {
       if (typeof rowMetadata.bodyCssClassName === 'function') {
@@ -147,9 +155,9 @@ class PivotGriddleRow extends Component {
       row[depthChildrenKey].forEach((child) => {
         const sRowKey = `${rowKey}-${hash(child)}`;
         if (child[depthChildrenKey] && child[depthChildrenKey].length >= 1) {
-          rows.push(...this.renderManyRow(child, columns, sRowKey));
+          rows.push(...this.renderManyRow(child, columns, sRowKey, depth + 1));
         } else {
-          rows.push(this.renderRow(child, columns, false, false, true, sRowKey));
+          rows.push(this.renderRow(child, columns, false, false, true, sRowKey, false, depth));
         }
       });
     }
