@@ -282,6 +282,7 @@ class PivotGriddleTable extends Component {
           const firstRow = row.children[0];
           childColumns = renderColumns.filter(item => item.column !== groupBy);
           firstRow[groupBy] = row[groupBy];
+          if (row[`_${groupBy}`]) firstRow[`_${groupBy}`] = row[`_${groupBy}`];
           const rowSpan = row.children.length;
           childRows = [...row.children.slice(1)];
           groupRows.push(this.renderRow(firstRow, renderColumns, key, rowSpan));
@@ -289,6 +290,7 @@ class PivotGriddleTable extends Component {
           const firstRow = {};
           childColumns = renderColumns.filter(item => item.column !== groupBy);
           firstRow[groupBy] = row[groupBy];
+          if (row[`_${groupBy}`]) firstRow[`_${groupBy}`] = row[`_${groupBy}`];
           const firstRowColumns = columns.filter(item => item.column === groupBy);
           if (totals) totals[childColumns[0].column] = groupSettings.totalText;
           const rowSpan = 0;
